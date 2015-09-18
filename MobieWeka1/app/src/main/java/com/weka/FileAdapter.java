@@ -65,7 +65,7 @@ public class FileAdapter extends BaseAdapter
       holder.icon.setImageBitmap(mIcon1);
     }
     else if(items.get(position).toString().equals("b2")) {
-      holder.text.setText("Back to paranet directory");
+      holder.text.setText("Back to parent directory"); //CB fixed spelling
       holder.icon.setImageBitmap(mIcon2);
     }
     else {
