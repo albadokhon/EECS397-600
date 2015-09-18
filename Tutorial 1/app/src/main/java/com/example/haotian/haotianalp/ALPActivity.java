@@ -44,6 +44,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+// Testing GitHub AB new
 
 public class ALPActivity extends Activity implements SensorEventListener {
     protected LockPatternView mPatternView;
