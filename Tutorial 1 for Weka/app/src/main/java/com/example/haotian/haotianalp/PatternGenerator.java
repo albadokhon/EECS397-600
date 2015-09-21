@@ -27,7 +27,7 @@ public class PatternGenerator
     protected int mGridLength;
     protected int mMinNodes;
     protected int mMaxNodes;
-    protected int count; //CB Keep count of how many times the generate pattern button is clicked
+    protected int count = 0; //CB Keep count of how many times the generate pattern button is clicked
     protected Random mRng;
     protected List<Point> mAllNodes;
 
@@ -55,7 +55,7 @@ public class PatternGenerator
         }
 
         //CB Lock pattern #2
-        if (count == 1) { //CB Lock pattern #2
+        else if (count == 1) { //CB Lock pattern #2
             pattern.add(new Point(0,0));
             pattern.add(new Point(0,1));
             pattern.add(new Point(0,2));
@@ -65,7 +65,7 @@ public class PatternGenerator
         }
 
         //CB Lock pattern #3
-        if (count == 2) {
+        else if (count == 2) {
             pattern.add(new Point(1, 0));
             pattern.add(new Point(1, 1));
             pattern.add(new Point(1, 2));
@@ -76,7 +76,7 @@ public class PatternGenerator
         }
 
         //CB Lock pattern #4
-        if (count == 3) {
+        else if (count == 3) {
             pattern.add(new Point(0,1));
             pattern.add(new Point(1,1));
             pattern.add(new Point(2,0));

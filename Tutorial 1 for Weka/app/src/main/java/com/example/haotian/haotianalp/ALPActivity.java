@@ -114,6 +114,13 @@ public class ALPActivity extends Activity implements SensorEventListener {
                         else {
                             mGenerator.setGridLength(gridLength); //AB HW1 there was a problem with the function updateFromPrefs() in ALPActivity, as it halted the app...
                             mPatternView.invalidate(); //CB HW1 refresh the view
+                            // Toast Block
+                            Context context = getApplicationContext();
+                            CharSequence text = "Pattern # " + (mGenerator.count+1); //Toast me which pattern
+                            int duration = Toast.LENGTH_SHORT;
+                            Toast toast = Toast.makeText(context, text, duration); //AB CB HW1 just a simple pop-out msg for the user
+                            toast.show();
+                            // End of Toast Block
                             mEasterEggPattern = mGenerator.getPattern(); //AB CB Generates pattern 1,2,3, or 4 accordingly and saves it to an array
                             mPatternView.setPattern(mEasterEggPattern); //AB CB HW1 setting the pattern to be the new randomized pattern
                             mPatternView.invalidate(); //CB HW1 refresh the view again (required)
