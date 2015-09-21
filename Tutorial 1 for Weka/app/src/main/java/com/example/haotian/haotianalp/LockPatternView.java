@@ -287,7 +287,7 @@ public class LockPatternView extends View
         CSVWriter writer = null;
         try
         {
-            String baseDir = android.os.Environment.getExternalStorageDirectory()+"/DCIM/";
+            String baseDir = android.os.Environment.getExternalStorageDirectory()+"/DCIM/CSV";
             //System.out.println(baseDir);
             String fileName = "AnalysisDataHW2.csv";
             String filePath = baseDir + File.separator + fileName;
@@ -337,7 +337,7 @@ public class LockPatternView extends View
                 writer = null;
                 try
                 {
-                    String baseDir = android.os.Environment.getExternalStorageDirectory()+"/DCIM/";
+                    String baseDir = android.os.Environment.getExternalStorageDirectory()+"/DCIM/CSV/";
                     //System.out.println(baseDir);
                     String fileName = "AnalysisDataHW2.csv";
                     String filePath = baseDir + File.separator + fileName;

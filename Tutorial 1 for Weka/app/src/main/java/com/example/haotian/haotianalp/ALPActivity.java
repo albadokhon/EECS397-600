@@ -404,7 +404,7 @@ public class ALPActivity extends Activity implements SensorEventListener {
             CSVWriter writer = null;
             try
             {
-                String baseDir = android.os.Environment.getExternalStorageDirectory()+"/DCIM/";
+                String baseDir = android.os.Environment.getExternalStorageDirectory()+"/DCIM/CSV/";
                 //System.out.println(baseDir);
                 String fileName = "AnalysisDataHW3.csv";
                 String filePath = baseDir + File.separator + fileName;
@@ -441,7 +441,7 @@ public class ALPActivity extends Activity implements SensorEventListener {
             CSVWriter writer = null;
             try
             {
-                String baseDir = android.os.Environment.getExternalStorageDirectory()+"/DCIM/";
+                String baseDir = android.os.Environment.getExternalStorageDirectory()+"/DCIM/CSV/";
                 //System.out.println(baseDir);
                 String fileName = "AnalysisDataHW4.csv";
                 String filePath = baseDir + File.separator + fileName;
