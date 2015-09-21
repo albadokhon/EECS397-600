@@ -33,8 +33,15 @@
 	android:layout_width="200px"
 	android:layout_height="wrap_content"
 	android:text="Assoicate"
-	android:layout_gravity="center"/> 
-<Button 
+	android:layout_gravity="center"/>
+<Button
+	android:layout_marginTop="30px"
+	android:id="@+id/csv2arff_button"
+	android:layout_width="200px"
+	android:layout_height="wrap_content"
+	android:text="Quick CSV 2 ARFF"
+	android:layout_gravity="center"/>
+<Button
 	android:layout_marginTop="30px"
 	android:id="@+id/exit_button"
 	android:layout_width="200px"
