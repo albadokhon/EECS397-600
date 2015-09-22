@@ -1,5 +1,5 @@
 # EECS397-600
-EECS397-600 Android WNS
+EECS397-600 Android WSN
 
 ## Pulling or (Fetching) rules:
 
