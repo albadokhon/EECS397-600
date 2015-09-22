@@ -2,18 +2,18 @@
 <items version="2" >
 
     <item
-        jar="C:\Users\aab119\StudioProjects\EECS397-600\MobieWeka1\app\libs\weka-3.6.6-android.jar"
+        jar="C:\Users\aab119\.gradle\caches\modules-2\files-2.1\com.opencsv\opencsv\3.5\2e88bd2818506573280599398f4198a04b2b2c8c\opencsv-3.5.jar"
         jumboMode="false"
         revision="23.0.1"
-        sha1="d5bef25d824a9a782e887bf2748df5a6e6788b1f">
-        <dex dex="C:\Users\aab119\StudioProjects\EECS397-600\MobieWeka1\app\build\intermediates\pre-dexed\debug\weka-3.6.6-android-ec04ae04c646722b4da5a6d34b43bb51faf5251e.jar" />
+        sha1="2e88bd2818506573280599398f4198a04b2b2c8c">
+        <dex dex="C:\Users\aab119\StudioProjects\EECS397-600\MobieWeka1\app\build\intermediates\pre-dexed\debug\opencsv-3.5-721da4551c06eba6caf66823987015bb454b73ba.jar" />
     </item>
     <item
-        jar="C:\Users\aab119\StudioProjects\EECS397-600\MobieWeka1\app\libs\libsvm.jar"
+        jar="C:\Users\aab119\.gradle\caches\modules-2\files-2.1\org.apache.commons\commons-lang3\3.3.2\90a3822c38ec8c996e84c16a3477ef632cbc87a3\commons-lang3-3.3.2.jar"
         jumboMode="false"
         revision="23.0.1"
-        sha1="5a763e981994e688c5a764630277a4a41ff980f6">
-        <dex dex="C:\Users\aab119\StudioProjects\EECS397-600\MobieWeka1\app\build\intermediates\pre-dexed\debug\libsvm-94724fb55516f38a85beca07a7a1f342b7f69e60.jar" />
+        sha1="90a3822c38ec8c996e84c16a3477ef632cbc87a3">
+        <dex dex="C:\Users\aab119\StudioProjects\EECS397-600\MobieWeka1\app\build\intermediates\pre-dexed\debug\commons-lang3-3.3.2-9a3118434aa82810a85248c82e813a5cdd212b09.jar" />
     </item>
 
 </items>
