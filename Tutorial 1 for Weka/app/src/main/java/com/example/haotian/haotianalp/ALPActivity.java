@@ -54,6 +54,7 @@ public class ALPActivity extends Activity implements SensorEventListener {
     protected Button mGenerateButton;
     protected Button mDesigner;
     protected ToggleButton mPracticeToggle;
+    protected ToggleButton mNameToggle; //CB A2 Button indicating who is completing the pattern
     private List<Point> mEasterEggPattern;
     protected SharedPreferences mPreferences;
     protected int mGridLength=0;
@@ -154,11 +155,34 @@ public class ALPActivity extends Activity implements SensorEventListener {
                             Toast toast = Toast.makeText(context, text, duration); //AB CB HW1 just a simple pop-out msg for the user
                             toast.show();
                             mPatternView.setPracticeMode(true); //AB HW1 has to be on practice mode after btn is toggled
-                        }
-                        else if (!isChecked) mPatternView.setPracticeMode(false);
+                        } else if (!isChecked) mPatternView.setPracticeMode(false);
 
                     }
                 });
+
+        mNameToggle = (ToggleButton) findViewById(R.id.Al);
+
+        //CB A2 Button allowing the user to toggle between who is completing the pattern
+        mNameToggle.setOnCheckedChangeListener(
+                new ToggleButton.OnCheckedChangeListener() {
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        if (isChecked) {
+                            Context context = getApplicationContext();
+                            CharSequence text = "Saving CSV for AB";
+                            int duration = Toast.LENGTH_SHORT;
+                            Toast toast = Toast.makeText(context, text, duration);
+                            toast.show();
+                        }
+                        else if (!isChecked) {
+                            Context context = getApplicationContext();
+                            CharSequence text = "Saving CSV for CB";
+                            int duration = Toast.LENGTH_SHORT;
+                            Toast toast = Toast.makeText(context, text, duration);
+                            toast.show();
+                        }
+                    }
+                }
+        );
 
         //AB HW3 Sensor Initialization
         mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
@@ -415,8 +439,9 @@ public class ALPActivity extends Activity implements SensorEventListener {
         else if (!mPatternView.isDrawing) {
             if (mPatternView.correctPattern) { //AB HW4 Only if pattern was correct
                 //this.saveCSVHW4(mLineHW4);
-                this.saveCSVgen(mLineBuffer, columnHW4);//AB HW4 Here we would want to save the data to the CSV file because pattern is correct
-                this.saveCSVgen(mLineBufWeka, columnWeka);
+                this.saveCSVgen(mLineBuffer, columnHW4, "");//AB HW4 Here we would want to save the data to the CSV file because pattern is correct
+                if (mNameToggle.isChecked()) this.saveCSVgen(mLineBufWeka, columnWeka, "AB"); //CB A2 Saving CSV to appropriate name
+                else this.saveCSVgen(mLineBufWeka, columnWeka, "CB"); //CB AB A2 Saving CSV to appropriate name
                 mPatternView.correctPattern = false;
                 counter++;
                 mLineBuffer.clear();
@@ -478,7 +503,7 @@ public class ALPActivity extends Activity implements SensorEventListener {
 
     }
 
-    private void saveCSVgen(List<String[]> data, String[] column) {
+    private void saveCSVgen(List<String[]> data, String[] column, String initial) {
         //AB HW4 CSV file creation
         if (mPatternView.getPracticeMode()) { //AB HW4 Store sensor data only in practice mode...
             CSVWriter writer = null;
@@ -487,7 +512,7 @@ public class ALPActivity extends Activity implements SensorEventListener {
                 String baseDir = android.os.Environment.getExternalStorageDirectory()+"/DCIM/CSV/";
                 //System.out.println(baseDir);
                 String fileName = "AnalysisDataHW4.csv";;
-                if (column.length == 25) fileName= "AnalysisDataWeka.csv";
+                if (column.length == 25) fileName= "AnalysisDataWeka" + initial + ".csv"; //CB A2 Saving appropriate file for user
                 String filePath = baseDir + File.separator + fileName;
                 File f = new File(filePath);
                 if(!f.exists()){
