@@ -31,6 +31,7 @@ public class MainMenu extends Activity{
         setContentView(R.layout.mainmenu);
         findViewById();
         addbuttonlistener();
+		converter = new Convert2Arff();
     }
     
     public void findViewById() {
@@ -70,10 +71,15 @@ public class MainMenu extends Activity{
                 //AB Why not handle a quick CSV 2 ARFF conversion here :)
                 else if (arg == csv2arff) {
                     try {
-                        converter.CSV2ARFF(4);
+                        converter.ReadParseCSV(4);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
+                    Context context = getApplicationContext();
+                    CharSequence text = "Saved...";
+                    int duration = Toast.LENGTH_SHORT;
+                    Toast toast = Toast.makeText(context, text, duration); //AB CB HW1 just a simple pop-out msg for the user
+                    toast.show();
                 }
 			}    		
     	};

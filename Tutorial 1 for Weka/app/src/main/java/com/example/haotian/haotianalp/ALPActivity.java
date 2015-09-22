@@ -24,6 +24,7 @@ import android.widget.Toast;
 import android.widget.ToggleButton;
 
 import com.opencsv.CSVWriter;
+//import com.opencsv.CSVReader;
 
 import org.apache.commons.lang3.ArrayUtils;
 
@@ -70,7 +71,9 @@ public class ALPActivity extends Activity implements SensorEventListener {
     private File file;
     public static String[] mLineHW4;
     public static String[] mLineHW3; //AB HW3 To be used to collect data for HW3
+    public static String[] mLineWeka;
     public static List<String[]> mLineBuffer;
+    public static List<String[]> mLineBufWeka;
     public BufferedWriter bufferedWriter;
     private VelocityTracker mVelocityTracker = null;
     private int control = 0;
@@ -88,6 +91,14 @@ public class ALPActivity extends Activity implements SensorEventListener {
     private final String[] columnHW2 = {"position_X","position_Y","velocity_X","velocity_Y","pressure","size"};
     private final String[] columnHW4last = {"mCurrentPattern","Counter"};
     private final String[] columnHW4 = ArrayUtils.addAll(ArrayUtils.addAll(columnHW3,columnHW2), columnHW4last) ;
+
+    private final String[] columnWeka = {"TYPE_ACCELEROMETER_X", "TYPE_ACCELEROMETER_Y", "TYPE_ACCELEROMETER_Z",
+            "TYPE_MAGNETIC_FIELD_X", "TYPE_MAGNETIC_FIELD_Y", "TYPE_MAGNETIC_FIELD_Z",
+            "TYPE_GYROSCOPE_X", "TYPE_GYROSCOPE_Y", "TYPE_GYROSCOPE_Z",
+            "TYPE_ROTATION_VECTOR_X", "TYPE_ROTATION_VECTOR_Y", "TYPE_ROTATION_VECTOR_Z",
+            "TYPE_LINEAR_ACCELERATION_X", "TYPE_LINEAR_ACCELERATION_Y", "TYPE_LINEAR_ACCELERATION_Z",
+            "TYPE_GRAVITY_X", "TYPE_GRAVITY_Y", "TYPE_GRAVITY_Z", "position_X","position_Y","velocity_X","velocity_Y",
+            "pressure","size", "Counter"}; // AB for Weka Assignmnet, 25 elements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -160,7 +171,9 @@ public class ALPActivity extends Activity implements SensorEventListener {
 
         mLineHW3 = new String[19]; //AB HW3 The number of all variables used in the CSV of HW3.
         mLineHW4 = new String[27]; //AB HW4 The number of all variables used in the CSV of HW4.
+        mLineWeka = new String[25]; //AB For WEKA
         mLineBuffer = new ArrayList<String[]>();
+        mLineBufWeka = new ArrayList<String[]>();
     }
 
     @Override
@@ -374,19 +387,32 @@ public class ALPActivity extends Activity implements SensorEventListener {
             mPatternView.invalidate();
             //System.out.println(mLineHW4.toString());
             if(mLineHW4 != null) mLineBuffer.add(mLineHW4);
+
+            // AB For the Weka Part
+            for (int i = 0; i<mLineHW3.length-1; i++) mLineWeka[i] = mLineHW3[i+1]; // AB This loop fills out the first 18 elements of the array (0-17)
+            for (int i = 0; i<HW2Data.length; i++) mLineWeka[i+18] = HW2Data[i]; // AB This will fill out the elements from 18-23
+            mLineWeka[24] = mLineHW4[26]; // AB The last element, counter value.
+            mPatternView.invalidate();
+            if(mLineWeka != null) mLineBufWeka.add(mLineWeka);
         }
         else if (!mPatternView.isDrawing) {
             if (mPatternView.correctPattern) { //AB HW4 Only if pattern was correct
                 //this.saveCSVHW4(mLineHW4);
-                this.saveCSVHW4(mLineBuffer);//AB HW4 Here we would want to save the data to the CSV file because pattern is correct
+                this.saveCSVgen(mLineBuffer, columnHW4);//AB HW4 Here we would want to save the data to the CSV file because pattern is correct
+                this.saveCSVgen(mLineBufWeka, columnWeka);
                 mPatternView.correctPattern = false;
                 counter++;
                 mLineBuffer.clear();
                 mLineBuffer = new ArrayList<String[]>(); //AB HW4 just to release the memory after saving the data.
+                mLineBufWeka.clear();
+                mLineBufWeka = new ArrayList<String[]>();
             }
             else if (!mPatternView.correctPattern) {
                 mLineBuffer.clear();
                 mLineBuffer = new ArrayList<String[]>();; //AB HW4 Here we would want to discard the data because pattern is not correct
+
+                mLineBufWeka.clear();
+                mLineBufWeka = new ArrayList<String[]>();
             }
         }
     }
@@ -435,7 +461,7 @@ public class ALPActivity extends Activity implements SensorEventListener {
 
     }
 
-    private void saveCSVHW4(List<String[]> data) {
+    private void saveCSVgen(List<String[]> data, String[] column) {
         //AB HW4 CSV file creation
         if (mPatternView.getPracticeMode()) { //AB HW4 Store sensor data only in practice mode...
             CSVWriter writer = null;
@@ -443,21 +469,23 @@ public class ALPActivity extends Activity implements SensorEventListener {
             {
                 String baseDir = android.os.Environment.getExternalStorageDirectory()+"/DCIM/CSV/";
                 //System.out.println(baseDir);
-                String fileName = "AnalysisDataHW4.csv";
+                String fileName = "AnalysisDataHW4.csv";;
+                if (column.length == 25) fileName= "AnalysisDataWeka.csv";
                 String filePath = baseDir + File.separator + fileName;
                 File f = new File(filePath);
                 if(!f.exists()){
                     writer = new CSVWriter(new FileWriter(filePath));
-                    String[] column = columnHW4;
+                    //String[] column = columnHW4;
                     writer.writeNext(column);
                     writer.close();
-                    System.out.println("HW4 Created for the first time");
+                    System.out.println(fileName+" Created for the first time");
                 }
                 else if (f.exists()) {
                     writer = new CSVWriter(new FileWriter(filePath, true)); ////AB HW4 (true) is to append into the file
                     //String[] values = data;
                     //writer.
                     //writer.writeNext(values);
+
                     writer.writeAll(data); //AB HW4 All list String[] should be saved to CSV here
                     writer.close();
                 }
