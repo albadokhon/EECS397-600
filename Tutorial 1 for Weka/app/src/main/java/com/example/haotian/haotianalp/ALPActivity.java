@@ -35,6 +35,7 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.lang.reflect.Array;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -386,14 +387,30 @@ public class ALPActivity extends Activity implements SensorEventListener {
             mLineHW4[26] = counter+"";
             mPatternView.invalidate();
             //System.out.println(mLineHW4.toString());
-            if(mLineHW4 != null) mLineBuffer.add(mLineHW4);
+            //System.out.println(Arrays.toString(mLineHW4));
+            if(mLineHW4 != null) {
+                if (mLineBuffer.size()>0) {
+                    if (!Arrays.equals(mLineBuffer.get(mLineBuffer.size()-1),mLineHW4)) mLineBuffer.add(mLineHW4);
+                }
+                else mLineBuffer.add(mLineHW4);
+                //System.out.println(mLineBuffer.toString());
+            }
+            mPatternView.invalidate();
 
             // AB For the Weka Part
             for (int i = 0; i<mLineHW3.length-1; i++) mLineWeka[i] = mLineHW3[i+1]; // AB This loop fills out the first 18 elements of the array (0-17)
             for (int i = 0; i<HW2Data.length; i++) mLineWeka[i+18] = HW2Data[i]; // AB This will fill out the elements from 18-23
             mLineWeka[24] = mLineHW4[26]; // AB The last element, counter value.
             mPatternView.invalidate();
-            if(mLineWeka != null) mLineBufWeka.add(mLineWeka);
+            if(mLineWeka != null) {
+                if (mLineBufWeka.size()>0) {
+                    if (!Arrays.equals(mLineBufWeka.get(mLineBufWeka.size()-1),mLineWeka)) mLineBufWeka.add(mLineWeka);
+                }
+                else mLineBufWeka.add(mLineWeka);
+                //System.out.println(mLineBuffer.toString());
+            }
+            mLineWeka = new String[25];
+            mLineHW4 = new String[27];
         }
         else if (!mPatternView.isDrawing) {
             if (mPatternView.correctPattern) { //AB HW4 Only if pattern was correct
@@ -480,7 +497,7 @@ public class ALPActivity extends Activity implements SensorEventListener {
                     writer.close();
                     System.out.println(fileName+" Created for the first time");
                 }
-                else if (f.exists()) {
+
                     writer = new CSVWriter(new FileWriter(filePath, true)); ////AB HW4 (true) is to append into the file
                     //String[] values = data;
                     //writer.
@@ -488,7 +505,7 @@ public class ALPActivity extends Activity implements SensorEventListener {
 
                     writer.writeAll(data); //AB HW4 All list String[] should be saved to CSV here
                     writer.close();
-                }
+
             }
             catch (IOException e) {
                 //error
