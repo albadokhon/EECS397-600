@@ -22,6 +22,9 @@ public class MainMenu extends Activity{
 	private Button classifier, clusterer, associate, exit;
 	private Button csv2arff; // AB Adding the CSV conversion button in the main menu
 	private Convert2Arff converter; //AB an external class method to convert all CSV files at once
+    private final String csvDir = android.os.Environment.getExternalStorageDirectory()+"/DCIM/CSV/";
+    private final String abCsv = "AnalysisDataWekaAB.csv";
+    private final String cbCsv = "AnalysisDataWekaCB.csv";
 
 	/** Called when the activity is first created. */
     @Override
@@ -70,14 +73,23 @@ public class MainMenu extends Activity{
 
                 //AB Why not handle a quick CSV 2 ARFF conversion here :)
                 else if (arg == csv2arff) {
+                    Context context = getApplicationContext();
+                    CharSequence text = "";
+                    int duration = Toast.LENGTH_SHORT;
                     try {
-                        converter.ReadParseCSV(4);
+                        boolean fab = new File(csvDir+abCsv).isFile();
+                        boolean fcb = new File(csvDir+cbCsv).isFile();
+                        boolean ab = false;
+                        boolean cb = false;
+                        if (fab) ab = converter.ReadParseCSV(abCsv);
+						if (fcb) cb = converter.ReadParseCSV(cbCsv);
+
+						if (ab && cb) text = "Converted and Saved AB and CB...";
+                        else if (ab || cb) text = "Converted and Saved only One CSV!";
+                        else if (!ab && !cb) text = "No CSV files were found in the CSV Folder!";
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                    Context context = getApplicationContext();
-                    CharSequence text = "Saved...";
-                    int duration = Toast.LENGTH_SHORT;
                     Toast toast = Toast.makeText(context, text, duration); //AB CB HW1 just a simple pop-out msg for the user
                     toast.show();
                 }
