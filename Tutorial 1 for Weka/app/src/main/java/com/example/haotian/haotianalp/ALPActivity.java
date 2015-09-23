@@ -83,7 +83,8 @@ public class ALPActivity extends Activity implements SensorEventListener {
     DateFormat mDateFormat;
     String mTimestamp;
     private int counter=0; //AB HW4 For correct counter
-    private String myStr = "";
+    private String initials = "CB"; //AB CB Initally the button is untoggled, so the value is CB
+
     private final String[] columnHW3 = {"TimeStamp", "TYPE_ACCELEROMETER_X", "TYPE_ACCELEROMETER_Y", "TYPE_ACCELEROMETER_Z",
             "TYPE_MAGNETIC_FIELD_X", "TYPE_MAGNETIC_FIELD_Y", "TYPE_MAGNETIC_FIELD_Z",
             "TYPE_GYROSCOPE_X", "TYPE_GYROSCOPE_Y", "TYPE_GYROSCOPE_Z",
@@ -100,7 +101,7 @@ public class ALPActivity extends Activity implements SensorEventListener {
             "TYPE_ROTATION_VECTOR_X", "TYPE_ROTATION_VECTOR_Y", "TYPE_ROTATION_VECTOR_Z",
             "TYPE_LINEAR_ACCELERATION_X", "TYPE_LINEAR_ACCELERATION_Y", "TYPE_LINEAR_ACCELERATION_Z",
             "TYPE_GRAVITY_X", "TYPE_GRAVITY_Y", "TYPE_GRAVITY_Z", "position_X","position_Y","velocity_X","velocity_Y",
-            "pressure","size", "Counter"}; // AB for Weka Assignmnet, 25 elements
+            "pressure","size", "Counter","Initials"}; // AB for Weka Assignmnet, 25 elements
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -172,7 +173,8 @@ public class ALPActivity extends Activity implements SensorEventListener {
                             int duration = Toast.LENGTH_SHORT;
                             Toast toast = Toast.makeText(context, text, duration);
                             toast.show();
-                            counter = 0;
+                            //counter = 0;
+                            initials = "AB";
                         }
                         else if (!isChecked) {
                             Context context = getApplicationContext();
@@ -180,7 +182,8 @@ public class ALPActivity extends Activity implements SensorEventListener {
                             int duration = Toast.LENGTH_SHORT;
                             Toast toast = Toast.makeText(context, text, duration);
                             toast.show();
-                            counter = 0;
+                            //counter = 0;
+                            initials = "CB";
                         }
                     }
                 }
@@ -198,7 +201,7 @@ public class ALPActivity extends Activity implements SensorEventListener {
 
         mLineHW3 = new String[19]; //AB HW3 The number of all variables used in the CSV of HW3.
         mLineHW4 = new String[27]; //AB HW4 The number of all variables used in the CSV of HW4.
-        mLineWeka = new String[25]; //AB For WEKA
+        mLineWeka = new String[26]; //AB For WEKA
         mLineBuffer = new ArrayList<String[]>();
         mLineBufWeka = new ArrayList<String[]>();
         //AB To start new data every time the app is started
@@ -430,7 +433,9 @@ public class ALPActivity extends Activity implements SensorEventListener {
             // AB For the Weka Part
             for (int i = 0; i<mLineHW3.length-1; i++) mLineWeka[i] = mLineHW3[i+1]; // AB This loop fills out the first 18 elements of the array (0-17)
             for (int i = 0; i<HW2Data.length; i++) mLineWeka[i+18] = HW2Data[i]; // AB This will fill out the elements from 18-23
-            mLineWeka[24] = mLineHW4[26]; // AB The last element, counter value.
+            mLineWeka[24] = mLineHW4[26]; // AB, counter value.
+            mLineWeka[25] = initials;// AB The last element, counter value.
+
             mPatternView.invalidate();
             if(mLineWeka != null) {
                 if (mLineBufWeka.size()>0) {
@@ -439,15 +444,15 @@ public class ALPActivity extends Activity implements SensorEventListener {
                 else mLineBufWeka.add(mLineWeka);
                 //System.out.println(mLineBuffer.toString());
             }
-            mLineWeka = new String[25];
+            mLineWeka = new String[26];
             mLineHW4 = new String[27];
         }
         else if (!mPatternView.isDrawing) {
             if (mPatternView.correctPattern) { //AB HW4 Only if pattern was correct
                 //this.saveCSVHW4(mLineHW4);
                 this.saveCSVgen(mLineBuffer, columnHW4, "");//AB HW4 Here we would want to save the data to the CSV file because pattern is correct
-                if (mNameToggle.isChecked()) this.saveCSVgen(mLineBufWeka, columnWeka, "AB"); //CB A2 Saving CSV to appropriate name
-                else this.saveCSVgen(mLineBufWeka, columnWeka, "CB"); //CB AB A2 Saving CSV to appropriate name
+                this.saveCSVgen(mLineBufWeka, columnWeka, ""); //CB A2 Saving CSV to appropriate name
+                 //CB AB A2 Saving CSV to appropriate name
                 mPatternView.correctPattern = false;
                 counter++;
                 if (counter%10==0) { //AB Notify me every 10 patterns
@@ -525,7 +530,7 @@ public class ALPActivity extends Activity implements SensorEventListener {
                 String baseDir = android.os.Environment.getExternalStorageDirectory()+"/DCIM/CSV/";
                 //System.out.println(baseDir);
                 String fileName = "AnalysisDataHW4.csv";;
-                if (column.length == 25) fileName= "AnalysisDataWeka" + initial + ".csv"; //CB A2 Saving appropriate file for user
+                if (column.length == 26) fileName= "AnalysisDataWeka" + initial + ".csv"; //CB A2 Saving appropriate file for user
                 String filePath = baseDir + File.separator + fileName;
                 File f = new File(filePath);
                 if(!f.exists()){
