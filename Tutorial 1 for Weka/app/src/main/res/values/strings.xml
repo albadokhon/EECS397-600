@@ -5,6 +5,9 @@
     <string name="action_settings">Setting</string>
     <string name="generate_button_label">Generate Pattern Randomly</string>
     <string name="practice">Practice</string>
+    <string name= "mode">Mode</string> //CB A2 Mode that the user is in (training or test)
+    <string name= "Training">Training</string> //CB A2 Training label
+    <string name= "Test">Test</string> //CB A2 Test label
     <string name="Al">Al</string> //CB A2 Name label
     <string name="Chelsey">Chelsey</string> //CB A2 Name label
     <string name="Designer">Personal Pattern Designer</string>
