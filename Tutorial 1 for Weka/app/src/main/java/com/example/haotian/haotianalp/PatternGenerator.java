@@ -45,43 +45,43 @@ public class PatternGenerator
       //  int seqcount = getMaxNodes() - mRng.nextInt(getMinNodes()); //AB CB HW1 this will return the count sequence possibilities (5 or 4 or 3)
         List<Point> pattern = new ArrayList<Point>(); //This is the final Array which will be returned from this function
 
-        //CB Lock pattern #1
+        //CB A2 Lock pattern #1
         if (count == 0) {
-            pattern.add(new Point(1,0));
-            pattern.add(new Point(2,1));
-            pattern.add(new Point(1,2));
             pattern.add(new Point(0,1));
+            pattern.add(new Point(1,2));
+            pattern.add(new Point(2,1));
+            pattern.add(new Point(1,0));
             count++; // CB adds one onto the count to indicate the button has been pressed
         }
 
-        //CB Lock pattern #2
+        //CB A2 Lock pattern #2
         else if (count == 1) { //CB Lock pattern #2
             pattern.add(new Point(0,0));
-            pattern.add(new Point(0,1));
-            pattern.add(new Point(0,2));
-            pattern.add(new Point(1,1));
-            pattern.add(new Point(2,0));
-            count++; // CB adds one onto the count to indicate the button has been pressed
-        }
-
-        //CB Lock pattern #3
-        else if (count == 2) {
-            pattern.add(new Point(1, 0));
-            pattern.add(new Point(1, 1));
-            pattern.add(new Point(1, 2));
-            pattern.add(new Point(0, 2));
-            pattern.add(new Point(0, 1));
-            pattern.add(new Point(0,0));
-            count++; //CB adds one to the count to indicate the button has been pressed
-        }
-
-        //CB Lock pattern #4
-        else if (count == 3) {
-            pattern.add(new Point(0,1));
-            pattern.add(new Point(1,1));
-            pattern.add(new Point(2,0));
             pattern.add(new Point(1,0));
-            count = 0; //CB resets the counter to 0
+            pattern.add(new Point(2,0));
+            pattern.add(new Point(1,1));
+            pattern.add(new Point(0,2));
+            count++; // CB A2 adds one onto the count to indicate the button has been pressed
+        }
+
+        //CB A2 Lock pattern #3
+        else if (count == 2) {
+            pattern.add(new Point(0, 1));
+            pattern.add(new Point(1, 1));
+            pattern.add(new Point(2, 1));
+            pattern.add(new Point(2, 0));
+            pattern.add(new Point(1, 0));
+            pattern.add(new Point(0,0));
+            count++; //CB A2 adds one to the count to indicate the button has been pressed
+        }
+
+        //CB A2 Lock pattern #4
+        else if (count == 3) {
+            pattern.add(new Point(1,0));
+            pattern.add(new Point(1,1));
+            pattern.add(new Point(0,2));
+            pattern.add(new Point(0,1));
+            count = 0; //CB A2 resets the counter to 0
         }
         //AB Debug
         //pattern.add(new Point(0,0));
