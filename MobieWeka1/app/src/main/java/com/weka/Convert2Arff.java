@@ -23,86 +23,54 @@ import com.opencsv.CSVReader;
  */
 public class Convert2Arff {
 
-    public Convert2Arff() {}
-
-    public static void CSV2ARFF() throws Exception {
-        //CSV2Arff <input.csv> <output.arff>
-        String csvDir = android.os.Environment.getExternalStorageDirectory()+"/DCIM/CSV/";
-        String csv2ArffDir = android.os.Environment.getExternalStorageDirectory()+"/DCIM/CSV2ARFF/";
-        File csvFolder = new File(csvDir);
-        File[] allCsvAvailable = csvFolder.listFiles();
-/*        if (allCsvAvailable.length == 0) { // AB check if there was no files in the directory
-            Context context = getApplicationContext();
-            CharSequence text = "Please go to Tutorial 1 App and test some patterns to generate data...";
-            int duration = Toast.LENGTH_SHORT;
-            Toast toast = Toast.makeText(context, text, duration); //AB CB HW1 just a simple pop-out msg for the user
-            toast.show();
-            return;
-        }*/
-        //Thread thread = new Thread() {
-        //    public void run() {}
-        //};
-        for (File csvFile : allCsvAvailable) { // AB This loop will convert all CSV files in /CSV and saves them into /CSV2ARFF
-            if (csvFile.isFile() && csvFile.getName().endsWith(".csv")) {
-                try {
-                    // load CSV
-                    CSVLoader loader = new CSVLoader();
-                    loader.setSource(new File(csvDir+csvFile.getName()));
-                    Instances data;
-                    if (loader != null)
-                        data = loader.getDataSet();
-                    else continue;
-                    // save ARFF
-                    String arffOut = csvFile.getName().replaceFirst("[.][^.]+$", ""); // AB This line will remove the extension of ".csv"
-                    ArffSaver saver = new ArffSaver();
-                    saver.setInstances(data);
-                    saver.setFile(new File(csv2ArffDir + arffOut + ".arff"));
-                    //saver.setDestination(new File( csv2ArffDir+arffOut+".arff" ));
-                    saver.writeBatch();
-
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
+    public Convert2Arff() {
+        // Constructor
     }
 
-    public static void CSV2ARFF(int hw) throws Exception {
-        //CSV2Arff <input.csv> <output.arff>
+    /*
+    Alaa Badokhon
+
+     This function is a CSV to Text (ARFF Format) parser that converts CSV to ARFF.
+     It will take one CSV file and generate two ARFF files. One for training and the other is for testing
+     As default naming; it will add a "TEST" to the end of the testing file name to distinguish between
+      the two...
+     As for default entries; 35 counter values will be as training values and the rest (min 15) will be for testing.
+
+    */
+    public boolean ReadParseCSV(String csvStr) throws Exception {
         String csvDir = android.os.Environment.getExternalStorageDirectory()+"/DCIM/CSV/";
         String csv2ArffDir = android.os.Environment.getExternalStorageDirectory()+"/DCIM/CSV2ARFF/";
-        String csvdata = "AnalysisDataWeka1.csv";
-        // load CSV
-        CSVLoader loader = new CSVLoader();
-        loader.setSource(new File(csvDir + csvdata));
-        //Thread.sleep(1000);
-        Instances data = loader.getDataSet();
-
-        // save ARFF
-        ArffSaver saver = new ArffSaver();
-        saver.setInstances(data);
-        String arffOut = csvdata.replaceFirst("[.][^.]+$", ""); // AB This line will remove the extension of ".csv"
-        saver.setFile(new File(csv2ArffDir+arffOut));
-        //saver.setDestination(new File(args[1]));
-        saver.writeBatch();
-    }
-
-    public void ReadParseCSV(int hw) throws Exception {
-        String csvDir = android.os.Environment.getExternalStorageDirectory()+"/DCIM/CSV/";
-        String csv2ArffDir = android.os.Environment.getExternalStorageDirectory()+"/DCIM/CSV2ARFF/";
-        String csvdata = "AnalysisDataWeka.csv";
-        CSVReader reader = new CSVReader(new FileReader(csvDir+csvdata));
+        String test = "TEST";
+        //String csvdata = "AnalysisDataWeka.csv";
+        CSVReader reader = new CSVReader(new FileReader(csvDir+csvStr));
         BufferedWriter writer = null;
+        BufferedWriter writerT = null;
         List<String[]> csvAll = reader.readAll(); // AB Here we will have our csv file converted to a local ArrayList of Strings for processing.
-        Integer firstCounter = Integer.parseInt(csvAll.get(1)[csvAll.get(csvAll.size()-1).length-1]);
-        Integer lastCounter = Integer.parseInt(csvAll.get(csvAll.size()-1)[csvAll.get(csvAll.size()-1).length-1])+1;
-        // AB This line will have the last number of counter
+        Integer firstCounter = Integer.parseInt(csvAll.get(1)[csvAll.get(csvAll.size()-1).length-1]); // AB The first counter value
+        Integer lastCounter = Integer.parseInt(csvAll.get(csvAll.size()-1)[csvAll.get(csvAll.size()-1).length-1])+1; // AB The last counter value
+
+        //AB For data to comply, it has to be more than 50 pattern trials
+        if (lastCounter-firstCounter<50) return false;
+        // 50 --> 35 training, 15 or more is testing.
+
+        // AB to produce a string with the format {0,1,2,...,lastCounter}
+        String TcounterFormat = "";
         String counterFormat = "{";
         for (int i = firstCounter; i<lastCounter-1; i++) counterFormat = counterFormat + i +",";
         counterFormat = counterFormat + (lastCounter-1)+"}";
 
+        String[] temp = counterFormat.split(",36,");
+        counterFormat = temp[0]+"}";
+        TcounterFormat = "{36,"+temp[1];
+
         // AB At first we will create an empty arff file
-        File arffFile = new File(csv2ArffDir+"AnalysisDataWeka.arff");
+        String csvNoExt = csvStr.replaceFirst("[.][^.]+$", ""); // AB temp.csv --> temp (removes extension)
+        String initials = csvNoExt.substring(Math.max(csvNoExt.length() - 2, 0));
+
+        File arffFile = new File(csv2ArffDir+csvNoExt+".arff");
+        File arffTest = new File(csv2ArffDir+csvNoExt+test+".arff");
+        String arffConstructor = ""; //AB This string will hold all the lines befor @data, because
+        String arffConstTest = "";   // the same is going to be used for both training and testing
 
         // AB Then we will start preparing the file arff as per format.
         /*
@@ -123,27 +91,55 @@ public class Convert2Arff {
         ......
          */
         // AB We will not be appending to this file, it will just be a conversion (no true for FileWriter)
+
         writer = new BufferedWriter(new FileWriter(arffFile));
-        writer.write("@relation AB&CBsensorAndMotion\n\n"); // AB The first line, leaving a line empty
+        writerT = new BufferedWriter(new FileWriter(arffTest));
+
+        //writer.write("@relation "+initials+"sensorAndMotion\n\n"); // AB The first line, leaving a line empty
+        arffConstructor = arffConstructor+"@relation "+initials+"sensorAndMotion\n\n";
+        arffConstTest = arffConstTest + "@relation "+initials+"sensorAndMotion\n\n";
         // AB The first line of CSV is for attributes SO;
         String[] attr = csvAll.get(0);
         for (int i = 0; i<attr.length; i++) {
             if (i==6 || i==7 || i==8) continue; // AB skip Gyroscope data since it is not used in this assignment
-            if (i==attr.length-1) writer.write("@attribute " + attr[i] + " "+counterFormat+"\n");
-            else writer.write("@attribute " + attr[i] + " numeric\n");
+            if (i==attr.length-1) {
+                arffConstructor = arffConstructor + "@attribute " + attr[i] + " "+counterFormat+"\n";
+                arffConstTest = arffConstTest + "@attribute " + attr[i] + " "+TcounterFormat+"\n";
+            }
+            else {
+                arffConstructor = arffConstructor + "@attribute " + attr[i] + " numeric\n";
+                arffConstTest = arffConstTest +  "@attribute " + attr[i] + " numeric\n";
+            }
         }
-        writer.write("\n@data\n"); // AB leaving two lines before the Data.
+        arffConstructor = arffConstructor + "\n@data\n";// AB leaving two lines before the Data.
+        arffConstTest = arffConstTest + "\n@data\n";// AB leaving two lines before the Data.
+
+        writer.write(arffConstructor);
+        writerT.write(arffConstTest);
+
+        //writer.write("\n@data\n");
         // AB for the data, it is going to be a ArrayList of Strings, one way is to make
         // two for loops to handle all entries...
         for (int i = 1; i<csvAll.size()-1; i++) { // Since 0 is for attr, we will start with 1
             String[] dataLine = csvAll.get(i);
-            for (int j = 0; j<dataLine.length; j++) {
-                if (j==6 || j==7 || j==8) continue; // AB skip Gyroscope data since it is not used in this assignment
-                if (j<dataLine.length-1) writer.write(dataLine[j]+","); //AB if it was not the last element of the array
-                else writer.write(dataLine[j]+"\n"); //the last element with no comma. but go to next line
+            if (Integer.parseInt(dataLine[dataLine.length-1])<36) { //Training loop..
+                for (int j = 0; j<dataLine.length; j++) {
+                    if (j==6 || j==7 || j==8) continue; // AB skip Gyroscope data since it is not used in this assignment
+                    if (j<dataLine.length-1) writer.write(dataLine[j]+","); //AB if it was not the last element of the array
+                    else writer.write(dataLine[j]+"\n"); //the last element with no comma. but go to next line
+                }
+            }
+            else if (Integer.parseInt(dataLine[dataLine.length-1])>=36) { //Testing loop
+                for (int j = 0; j<dataLine.length; j++) {
+                    if (j==6 || j==7 || j==8) continue; // AB skip Gyroscope data since it is not used in this assignment
+                    if (j<dataLine.length-1) writerT.write(dataLine[j]+","); //AB if it was not the last element of the array
+                    else writerT.write(dataLine[j]+"\n"); //the last element with no comma. but go to next line
+                }
             }
         }
 
-        writer.close(); // AB close and save the ARFF file
+        writer.close(); //AB Close and save the ARFF file
+        writerT.close(); //AB Close and save the TEST ARFF file
+        return true;
     }
 }

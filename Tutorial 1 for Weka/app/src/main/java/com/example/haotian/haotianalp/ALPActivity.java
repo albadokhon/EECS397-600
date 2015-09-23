@@ -172,6 +172,7 @@ public class ALPActivity extends Activity implements SensorEventListener {
                             int duration = Toast.LENGTH_SHORT;
                             Toast toast = Toast.makeText(context, text, duration);
                             toast.show();
+                            counter = 0;
                         }
                         else if (!isChecked) {
                             Context context = getApplicationContext();
@@ -179,6 +180,7 @@ public class ALPActivity extends Activity implements SensorEventListener {
                             int duration = Toast.LENGTH_SHORT;
                             Toast toast = Toast.makeText(context, text, duration);
                             toast.show();
+                            counter = 0;
                         }
                     }
                 }
@@ -199,6 +201,10 @@ public class ALPActivity extends Activity implements SensorEventListener {
         mLineWeka = new String[25]; //AB For WEKA
         mLineBuffer = new ArrayList<String[]>();
         mLineBufWeka = new ArrayList<String[]>();
+        //AB To start new data every time the app is started
+        File CSVdir = new File(android.os.Environment.getExternalStorageDirectory()+"/DCIM/CSV");
+        for(File file: CSVdir.listFiles()) file.delete();
+
     }
 
     @Override
@@ -207,7 +213,7 @@ public class ALPActivity extends Activity implements SensorEventListener {
         super.onResume();
         updateFromPrefs();
 
-        //AB HW3 Registering all sensors for updating values wrt the sampling rate (SENSOR_DELAY_NORMAL)
+        //AB HW3 and HW4 Registering all sensors for updating values wrt the sampling rate (SENSOR_DELAY_NORMAL)
         mSensorManager.registerListener(this, mAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
         mSensorManager.registerListener(this, mMagnetometer, SensorManager.SENSOR_DELAY_NORMAL);
         mSensorManager.registerListener(this, mGyroscope, SensorManager.SENSOR_DELAY_NORMAL);
@@ -444,6 +450,13 @@ public class ALPActivity extends Activity implements SensorEventListener {
                 else this.saveCSVgen(mLineBufWeka, columnWeka, "CB"); //CB AB A2 Saving CSV to appropriate name
                 mPatternView.correctPattern = false;
                 counter++;
+                if (counter%10==0) { //AB Notify me every 10 patterns
+                    Context context = getApplicationContext();
+                    CharSequence text = counter+"";
+                    int duration = Toast.LENGTH_SHORT;
+                    Toast toast = Toast.makeText(context, text, duration); //AB CB HW1 just a simple pop-out msg for the user
+                    toast.show();
+                }
                 mLineBuffer.clear();
                 mLineBuffer = new ArrayList<String[]>(); //AB HW4 just to release the memory after saving the data.
                 mLineBufWeka.clear();
@@ -523,14 +536,10 @@ public class ALPActivity extends Activity implements SensorEventListener {
                     System.out.println(fileName+" Created for the first time");
                 }
 
-                    writer = new CSVWriter(new FileWriter(filePath, true)); ////AB HW4 (true) is to append into the file
-                    //String[] values = data;
-                    //writer.
-                    //writer.writeNext(values);
+                writer = new CSVWriter(new FileWriter(filePath, true)); //AB HW4 (true) is to append into the file
 
-                    writer.writeAll(data); //AB HW4 All list String[] should be saved to CSV here
-                    writer.close();
-
+                writer.writeAll(data); //AB HW4 All list String[] should be saved to CSV here
+                writer.close();
             }
             catch (IOException e) {
                 //error
