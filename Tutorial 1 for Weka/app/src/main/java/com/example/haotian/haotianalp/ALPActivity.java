@@ -55,6 +55,7 @@ public class ALPActivity extends Activity implements SensorEventListener {
     protected Button mDesigner;
     protected ToggleButton mPracticeToggle;
     protected ToggleButton mNameToggle; //CB A2 Button indicating who is completing the pattern
+    protected ToggleButton mModeToggle; //CB A2 Button indicating if it is training or test
     private List<Point> mEasterEggPattern;
     protected SharedPreferences mPreferences;
     protected int mGridLength=0;
@@ -184,6 +185,34 @@ public class ALPActivity extends Activity implements SensorEventListener {
                             toast.show();
                             //counter = 0;
                             initials = "CB";
+                        }
+                    }
+                }
+        );
+
+        mModeToggle = (ToggleButton) findViewById(R.id.Al);
+
+        //CB A2 Button allowing the user to toggle between training and test
+        mModeToggle.setOnCheckedChangeListener(
+                new ToggleButton.OnCheckedChangeListener() {
+                    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                        if (isChecked) {
+                            Context context = getApplicationContext();
+                            CharSequence text = "Test Mode";
+                            int duration = Toast.LENGTH_SHORT;
+                            Toast toast = Toast.makeText(context, text, duration);
+                            toast.show();
+                            if (mNameToggle.isChecked()) initials = "U1"; //CB A2 this is AB as user
+                            else initials = "U2"; //CB A2 this is CB as user
+                            //counter = 0;
+                        }
+                        else if (!isChecked) {
+                            Context context = getApplicationContext();
+                            CharSequence text = "Training Mode";
+                            int duration = Toast.LENGTH_SHORT;
+                            Toast toast = Toast.makeText(context, text, duration);
+                            toast.show();
+                            //counter = 0;
                         }
                     }
                 }
