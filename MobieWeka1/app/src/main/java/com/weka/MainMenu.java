@@ -23,8 +23,9 @@ public class MainMenu extends Activity{
 	private Button csv2arff; // AB Adding the CSV conversion button in the main menu
 	private Convert2Arff converter; //AB an external class method to convert all CSV files at once
     private final String csvDir = android.os.Environment.getExternalStorageDirectory()+"/DCIM/CSV/";
-    private final String abCsv = "AnalysisDataWekaAB.csv";
-    private final String cbCsv = "AnalysisDataWekaCB.csv";
+    //private final String abCsv = "AnalysisDataWekaAB.csv";
+    //private final String cbCsv = "AnalysisDataWekaCB.csv";
+	private String oneCsv = "AnalysisDataWeka.csv";
 
 	/** Called when the activity is first created. */
     @Override
@@ -77,16 +78,13 @@ public class MainMenu extends Activity{
                     CharSequence text = "";
                     int duration = Toast.LENGTH_SHORT;
                     try {
-                        boolean fab = new File(csvDir+abCsv).isFile();
-                        boolean fcb = new File(csvDir+cbCsv).isFile();
-                        boolean ab = false;
-                        boolean cb = false;
-                        if (fab) ab = converter.ReadParseCSV(abCsv);
-						if (fcb) cb = converter.ReadParseCSV(cbCsv);
+                        boolean fab = new File(csvDir+oneCsv).isFile();
+						boolean ab = false;
+                        if (fab) ab = converter.ReadParseCSV(oneCsv);
 
-						if (ab && cb) text = "Converted and Saved AB and CB...";
-                        else if (ab || cb) text = "Converted and Saved only One CSV!";
-                        else if (!ab && !cb) text = "No CSV files were found in the CSV Folder!";
+						if (ab) text = "Converted and Saved Weka CSV";
+                        else if (!ab) text = "There were less than 50 entries of data!";
+                        else if (!fab) text = "No Weka CSV files were found in the CSV Folder!";
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
