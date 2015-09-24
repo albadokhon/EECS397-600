@@ -50,21 +50,21 @@ public class Convert2Arff {
         Integer lastCounter = Integer.parseInt(csvAll.get(csvAll.size()-1)[csvAll.get(csvAll.size()-1).length-2])+1; // AB The last counter value
         //String[] initials = {"AB", "CB", "U1", "U2"}; //AB CB All possible initial values
         String initials = "{AB,CB}";
-        String initialsT = "{U1,U2}";
+        //String initialsT = "{U1,U2}";
 
         //AB For data to comply, it has to be more than 50 pattern trials
         if (lastCounter-firstCounter<50) return false;
         // 50 --> 35 training, 15 or more is testing.
 
         // AB to produce a string with the format {0,1,2,...,lastCounter}
-        String TcounterFormat = "";
+/*        String TcounterFormat = "";
         String counterFormat = "{";
         for (int i = firstCounter; i<lastCounter-1; i++) counterFormat = counterFormat + i +",";
         counterFormat = counterFormat + (lastCounter-1)+"}";
 
         String[] temp = counterFormat.split(",36,");
         counterFormat = temp[0]+"}";
-        TcounterFormat = "{36,"+temp[1];
+        TcounterFormat = "{36,"+temp[1];*/
 
         // AB At first we will create an empty arff file
         String csvNoExt = csvStr.replaceFirst("[.][^.]+$", ""); // AB temp.csv --> temp (removes extension)
@@ -112,7 +112,7 @@ public class Convert2Arff {
             }*/
             if (i==attr.length-1) { // meaning initials column
                 arffConstructor = arffConstructor + "@attribute " + attr[i] + " "+initials+"\n";
-                arffConstTest = arffConstTest + "@attribute " + attr[i] + " "+initialsT+"\n";
+                arffConstTest = arffConstTest + "@attribute " + attr[i] + " "+initials+"\n";
             }
             else {
                 arffConstructor = arffConstructor + "@attribute " + attr[i] + " numeric\n";
@@ -145,7 +145,12 @@ public class Convert2Arff {
                 for (int j = 0; j<dataLine.length; j++) {
                     if (j==6 || j==7 || j==8 || j==dataLine.length-2) continue; // AB skip Gyroscope data since it is not used in this assignment
                     if (j<dataLine.length-1) writerT.write(dataLine[j]+","); //AB if it was not the last element of the array
-                    else writerT.write(dataLine[j]+"\n"); //the last element with no comma. but go to next line
+                    else { //AB CB The last element with no comma. but go to next line
+                        // AB CB We have to change the initials here to AB and CB instead of U1 and U2
+                        if (dataLine[j].equals("U1")) dataLine[j] = "AB";
+                        else if (dataLine[j].equals("U2")) dataLine[j] = "CB";
+                        writerT.write(dataLine[j]+"\n");
+                    }
                 }
             }
         }

@@ -236,8 +236,10 @@ public class ALPActivity extends Activity implements SensorEventListener {
 
         //AB To start new data every time the app is started
         File CSVdir = new File(android.os.Environment.getExternalStorageDirectory()+"/DCIM/CSV");
-        for(File file: CSVdir.listFiles()) file.delete();
-
+        if (CSVdir.exists()) {
+            for(File file: CSVdir.listFiles()) file.delete();
+        }
+        else if (!CSVdir.exists()) new File(android.os.Environment.getExternalStorageDirectory()+"/DCIM/CSV/").mkdir();
     }
 
     @Override
