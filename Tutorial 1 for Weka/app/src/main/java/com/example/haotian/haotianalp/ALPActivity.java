@@ -190,7 +190,7 @@ public class ALPActivity extends Activity implements SensorEventListener {
                 }
         );
 
-        mModeToggle = (ToggleButton) findViewById(R.id.Al);
+        mModeToggle = (ToggleButton) findViewById(R.id.mode);
 
         //CB A2 Button allowing the user to toggle between training and test
         mModeToggle.setOnCheckedChangeListener(
@@ -233,6 +233,7 @@ public class ALPActivity extends Activity implements SensorEventListener {
         mLineWeka = new String[26]; //AB For WEKA
         mLineBuffer = new ArrayList<String[]>();
         mLineBufWeka = new ArrayList<String[]>();
+
         //AB To start new data every time the app is started
         File CSVdir = new File(android.os.Environment.getExternalStorageDirectory()+"/DCIM/CSV");
         for(File file: CSVdir.listFiles()) file.delete();
@@ -422,6 +423,17 @@ public class ALPActivity extends Activity implements SensorEventListener {
             mLineHW3[17] = event.values[1]+""; //AB HW3 Value of Y
             mLineHW3[18] = event.values[2]+""; //AB HW3 Value of Z
         }
+
+        //AB To guarantee that initials have corresponding values
+        if (!mModeToggle.isChecked()) { //AB Meaning Training Mode
+            if (mNameToggle.isChecked()) initials = "AB";
+            else initials = "CB";
+        }
+        else if (mModeToggle.isChecked()) {
+            if (mNameToggle.isChecked()) initials = "U1";
+            else initials = "U2";
+        }
+
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd-hhmmss");
         mTimestamp = simpleDateFormat.format(new Date()); //AB HW3 Timestamp...
         mLineHW3[0] = mTimestamp; //AB HW3 to store the current time.
@@ -498,7 +510,7 @@ public class ALPActivity extends Activity implements SensorEventListener {
             }
             else if (!mPatternView.correctPattern) {
                 mLineBuffer.clear();
-                mLineBuffer = new ArrayList<String[]>();; //AB HW4 Here we would want to discard the data because pattern is not correct
+                mLineBuffer = new ArrayList<String[]>(); //AB HW4 Here we would want to discard the data because pattern is not correct
 
                 mLineBufWeka.clear();
                 mLineBufWeka = new ArrayList<String[]>();
