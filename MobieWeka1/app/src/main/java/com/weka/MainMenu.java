@@ -20,7 +20,7 @@ import weka.core.converters.CSVLoader;
 public class MainMenu extends Activity{
 	
 	private Button classifier, clusterer, associate, exit;
-	private Button csv2arff; // AB Adding the CSV conversion button in the main menu
+	private Button csv2arffex1, csv2arffex2; // AB CB Adding the CSV conversion button in the main menu
 	private Convert2Arff converter; //AB an external class method to convert all CSV files at once
     private final String csvDir = android.os.Environment.getExternalStorageDirectory()+"/DCIM/CSV/";
     //private final String abCsv = "AnalysisDataWekaAB.csv";
@@ -44,7 +44,8 @@ public class MainMenu extends Activity{
     	associate = (Button)findViewById(R.id.associate_button);  	
     	exit = (Button)findViewById(R.id.exit_button);
 
-        csv2arff = (Button) findViewById(R.id.csv2arff_button); // AB Added button handler
+        csv2arffex1 = (Button) findViewById(R.id.csv2arff_button_ex1); // AB Added button handler
+		csv2arffex2 = (Button) findViewById(R.id.csv2arff_button_ex2); // CB Added button handler
     }
     
     public void addbuttonlistener (){
@@ -73,7 +74,7 @@ public class MainMenu extends Activity{
 				}
 
                 //AB Why not handle a quick CSV 2 ARFF conversion here :)
-                else if (arg == csv2arff) {
+                else if (arg == csv2arffex1) {
                     Context context = getApplicationContext();
                     CharSequence text = "";
                     int duration = Toast.LENGTH_SHORT;
@@ -91,6 +92,25 @@ public class MainMenu extends Activity{
                     Toast toast = Toast.makeText(context, text, duration); //AB CB HW1 just a simple pop-out msg for the user
                     toast.show();
                 }
+
+				//CB CSV 2 ARFF conversion here for experiment 2
+				else if (arg == csv2arffex2) {
+					Context context = getApplicationContext();
+					CharSequence text = "";
+					int duration = Toast.LENGTH_SHORT;
+					try {
+						boolean fab = new File(csvDir+oneCsv).isFile();
+						boolean ab = false;
+						if (fab) ab = converter.ReadParseCSVex2(oneCsv);
+						if (ab) text = "Converted and Saved Weka CSV";
+						else if (!ab) text = "There were less than 50 entries of data!";
+						else if (!fab) text = "No Weka CSV files were found in the CSV Folder!";
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					Toast toast = Toast.makeText(context, text, duration);
+					toast.show();
+				}
 			}    		
     	};
     	classifier.setOnClickListener(listener);
@@ -98,6 +118,7 @@ public class MainMenu extends Activity{
     	associate.setOnClickListener(listener);
     	exit.setOnClickListener(listener);
 
-        csv2arff.setOnClickListener(listener); //AB adding listener
+        csv2arffex1.setOnClickListener(listener); //AB adding listener
+		csv2arffex2.setOnClickListener(listener); //AB adding listener
     }
 }
