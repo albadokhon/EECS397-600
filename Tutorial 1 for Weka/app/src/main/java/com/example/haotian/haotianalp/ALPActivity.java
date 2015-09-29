@@ -102,7 +102,10 @@ public class ALPActivity extends Activity implements SensorEventListener {
             "TYPE_ROTATION_VECTOR_X", "TYPE_ROTATION_VECTOR_Y", "TYPE_ROTATION_VECTOR_Z",
             "TYPE_LINEAR_ACCELERATION_X", "TYPE_LINEAR_ACCELERATION_Y", "TYPE_LINEAR_ACCELERATION_Z",
             "TYPE_GRAVITY_X", "TYPE_GRAVITY_Y", "TYPE_GRAVITY_Z", "position_X","position_Y","velocity_X","velocity_Y",
-            "pressure","size", "Counter","Initials"}; // AB for Weka Assignmnet, 25 elements
+            "pressure","size", "Counter","Initials", "Pattern"}; // AB for Weka Assignmnet, 25 elements
+
+    public int patternCount;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -129,9 +132,10 @@ public class ALPActivity extends Activity implements SensorEventListener {
                         else {
                             mGenerator.setGridLength(gridLength); //AB HW1 there was a problem with the function updateFromPrefs() in ALPActivity, as it halted the app...
                             mPatternView.invalidate(); //CB HW1 refresh the view
+                            setPatternCount(mGenerator.count+1);
                             // Toast Block
                             Context context = getApplicationContext();
-                            CharSequence text = "Pattern # " + (mGenerator.count+1); //Toast me which pattern
+                            CharSequence text = "Pattern # " + (patternCount); //Toast me which pattern
                             int duration = Toast.LENGTH_SHORT;
                             Toast toast = Toast.makeText(context, text, duration); //AB CB HW1 just a simple pop-out msg for the user
                             toast.show();
@@ -230,14 +234,16 @@ public class ALPActivity extends Activity implements SensorEventListener {
 
         mLineHW3 = new String[19]; //AB HW3 The number of all variables used in the CSV of HW3.
         mLineHW4 = new String[27]; //AB HW4 The number of all variables used in the CSV of HW4.
-        mLineWeka = new String[26]; //AB For WEKA
+        mLineWeka = new String[27];//[26]; //AB For WEKA (27 for which Pattern)
         mLineBuffer = new ArrayList<String[]>();
         mLineBufWeka = new ArrayList<String[]>();
 
         //AB To start new data every time the app is started
         File CSVdir = new File(android.os.Environment.getExternalStorageDirectory()+"/DCIM/CSV");
-        for(File file: CSVdir.listFiles()) file.delete();
-
+        if (CSVdir.exists()) {
+            for(File file: CSVdir.listFiles()) file.delete();
+        }
+        else if (!CSVdir.exists()) new File(android.os.Environment.getExternalStorageDirectory()+"/DCIM/CSV/").mkdir();
     }
 
     @Override
@@ -476,6 +482,7 @@ public class ALPActivity extends Activity implements SensorEventListener {
             for (int i = 0; i<HW2Data.length; i++) mLineWeka[i+18] = HW2Data[i]; // AB This will fill out the elements from 18-23
             mLineWeka[24] = mLineHW4[26]; // AB, counter value.
             mLineWeka[25] = initials;// AB The last element, counter value.
+            mLineWeka[26] = patternCount+""; //AB which value
 
             mPatternView.invalidate();
             if(mLineWeka != null) {
@@ -485,14 +492,14 @@ public class ALPActivity extends Activity implements SensorEventListener {
                 else mLineBufWeka.add(mLineWeka);
                 //System.out.println(mLineBuffer.toString());
             }
-            mLineWeka = new String[26];
+            mLineWeka = new String[27];
             mLineHW4 = new String[27];
         }
         else if (!mPatternView.isDrawing) {
             if (mPatternView.correctPattern) { //AB HW4 Only if pattern was correct
                 //this.saveCSVHW4(mLineHW4);
-                this.saveCSVgen(mLineBuffer, columnHW4, "");//AB HW4 Here we would want to save the data to the CSV file because pattern is correct
-                this.saveCSVgen(mLineBufWeka, columnWeka, ""); //CB A2 Saving CSV to appropriate name
+                this.saveCSVgen(mLineBuffer, columnHW4, "hw4");//AB HW4 Here we would want to save the data to the CSV file because pattern is correct
+                this.saveCSVgen(mLineBufWeka, columnWeka, "weka"); //CB A2 Saving CSV to appropriate name
                  //CB AB A2 Saving CSV to appropriate name
                 mPatternView.correctPattern = false;
                 counter++;
@@ -562,7 +569,11 @@ public class ALPActivity extends Activity implements SensorEventListener {
 
     }
 
-    private void saveCSVgen(List<String[]> data, String[] column, String initial) {
+    private void setPatternCount(int count) {
+        patternCount = count;
+    }
+
+    private void saveCSVgen(List<String[]> data, String[] column, String type) {
         //AB HW4 CSV file creation
         if (mPatternView.getPracticeMode()) { //AB HW4 Store sensor data only in practice mode...
             CSVWriter writer = null;
@@ -571,7 +582,7 @@ public class ALPActivity extends Activity implements SensorEventListener {
                 String baseDir = android.os.Environment.getExternalStorageDirectory()+"/DCIM/CSV/";
                 //System.out.println(baseDir);
                 String fileName = "AnalysisDataHW4.csv";;
-                if (column.length == 26) fileName= "AnalysisDataWeka" + initial + ".csv"; //CB A2 Saving appropriate file for user
+                if (type.equalsIgnoreCase("weka")) fileName= "AnalysisDataWeka" + ".csv"; //CB A2 Saving appropriate file for user
                 String filePath = baseDir + File.separator + fileName;
                 File f = new File(filePath);
                 if(!f.exists()){

@@ -13,6 +13,8 @@
     <string name="classifier_trainfile">Choose the file(arff) for classifier to train</string>
     <string name="clusterer_file">Choose the file(arff) for clusterer</string>
     <string name="clusterer_text">Clusterer</string>
+    <string name="csv2arff_button_ex1">Quick CSV 2 ARFF Ex 1</string>
+    <string name="csv2arff_button_ex2">Quick CSV 2 ARFF Ex 2</string>
     <string name="exit">Exit</string>
     <string name="wrong_file_warn">Sorry, you do not choose right file, please choose arff file!</string>
 </resources>

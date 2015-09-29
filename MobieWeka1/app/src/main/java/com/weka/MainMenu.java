@@ -82,7 +82,6 @@ public class MainMenu extends Activity{
                         boolean fab = new File(csvDir+oneCsv).isFile();
 						boolean ab = false;
                         if (fab) ab = converter.ReadParseCSV(oneCsv);
-
 						if (ab) text = "Converted and Saved Weka CSV";
                         else if (!ab) text = "There were less than 50 entries of data!";
                         else if (!fab) text = "No Weka CSV files were found in the CSV Folder!";
