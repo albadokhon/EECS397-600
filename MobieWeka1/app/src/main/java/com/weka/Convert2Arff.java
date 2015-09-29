@@ -104,7 +104,7 @@ public class Convert2Arff {
         // AB The first line of CSV is for attributes SO;
         String[] attr = csvAll.get(0);
         for (int i = 0; i<attr.length; i++) {
-            if (i==6 || i==7 || i==8 || i==attr.length-3 || i==attr.length-1) continue; // AB skip Gyroscope data since it is not used in this assignment // and Counter for now
+            if (i==6 || i==7 || i==8 || i==attr.length-3 || i==attr.length-1) continue; // AB CB skip Gyroscope and Pattern data since it is not used in this assignment // and Counter for now
 
 /*            if (i==attr.length-2) { // meaning Counter column
                 arffConstructor = arffConstructor + "@attribute " + attr[i] + " "+counterFormat+"\n";
@@ -134,7 +134,7 @@ public class Convert2Arff {
             //AB if initials equals AB or CB then this is training data
             if (dataLine[dataLine.length-1].equals("AB") || dataLine[dataLine.length-1].equals("CB")) {
                 for (int j = 0; j<dataLine.length; j++) {
-                    if (j==6 || j==7 || j==8 || j==dataLine.length-3 || j==dataLine.length-1) continue; // AB skip Gyroscope data since it is not used in this assignment // and Counter for now
+                    if (j==6 || j==7 || j==8 || j==dataLine.length-3 || j==dataLine.length-1) continue; // AB CB skip Gyroscope and pattern data since it is not used in this assignment // and Counter for now
                     if (j<dataLine.length-2) writer.write(dataLine[j]+","); //AB if it was not the last element of the array
                     else writer.write(dataLine[j]+"\n"); //the last element with no comma. but go to next line
                 }
@@ -143,7 +143,7 @@ public class Convert2Arff {
             //AB if initials were anonymous then it is training data.
             else  {
                 for (int j = 0; j<dataLine.length; j++) {
-                    if (j==6 || j==7 || j==8 || j==dataLine.length-3 || j==dataLine.length-1) continue; // AB skip Gyroscope data since it is not used in this assignment
+                    if (j==6 || j==7 || j==8 || j==dataLine.length-3 || j==dataLine.length-1) continue; // AB CB skip Gyroscope and pattern data since it is not used in this assignment
                     else if (j<dataLine.length-2) writerT.write(dataLine[j]+","); //AB if it was not the last element of the array
                     else writerT.write(dataLine[j]+"\n"); //the last element with no comma. but go to next line
                 }
@@ -154,22 +154,20 @@ public class Convert2Arff {
         return true;
     }
 
-    //CB ARFF Generator for Experiment 2
-    public boolean ReadParseCSVex2(String csvStr) throws Exception {
+    //CB A2 ARFF Generator for Experiment 2. Adds the pattern column as an attribute within the ARFF. This serves as unknown for when the mode is test.
+        public boolean ReadParseCSVex2(String csvStr) throws Exception {
         String csvDir = android.os.Environment.getExternalStorageDirectory()+"/DCIM/CSV/";
         String csv2ArffDir = android.os.Environment.getExternalStorageDirectory()+"/DCIM/CSV2ARFF/";
         String test = "Test";
-        //String csvdata = "AnalysisDataWeka.csv";
         CSVReader reader = new CSVReader(new FileReader(csvDir+csvStr));
         BufferedWriter writer = null;
         BufferedWriter writerT = null;
         List<String[]> csvAll = reader.readAll(); // AB Here we will have our csv file converted to a local ArrayList of Strings for processing.
         Integer firstCounter = Integer.parseInt(csvAll.get(1)[csvAll.get(csvAll.size() - 1).length - 3]); // AB The first counter value
         Integer lastCounter = Integer.parseInt(csvAll.get(csvAll.size()-1)[csvAll.get(csvAll.size()-1).length-3])+1; // AB The last counter value
-        String[] patterns = {"A", "B", "C", "D"}; //CB All possible pattern values
-        String patternAttr = "{A,B,C,D}"; // CB
-        //String initials = "{AB,CB}";
-        //String initialsT = "{U1,U2}";
+        String[] patterns = {"A", "B", "C", "D"}; //CB A2 All possible pattern values
+        String patternAttr = "{A,B,C,D}"; // CB A2
+
 
         //AB For data to comply, it has to be more than 50 pattern trials
         if (lastCounter-firstCounter<50) return false;
@@ -187,7 +185,6 @@ public class Convert2Arff {
 
         // AB At first we will create an empty arff file
         String csvNoExt = csvStr.replaceFirst("[.][^.]+$", ""); // AB temp.csv --> temp (removes extension)
-        //String initials = csvNoExt.substring(Math.max(csvNoExt.length() - 2, 0));
 
         File arffFile = new File(csv2ArffDir+csvNoExt+"EX2"+".arff");
         File arffTest = new File(csv2ArffDir+csvNoExt+test+"EX2"+".arff");
@@ -217,19 +214,14 @@ public class Convert2Arff {
         writer = new BufferedWriter(new FileWriter(arffFile));
         writerT = new BufferedWriter(new FileWriter(arffTest));
 
-        //writer.write("@relation "+initials+"sensorAndMotion\n\n"); // AB The first line, leaving a line empty
         arffConstructor = arffConstructor+"@relation "+"sensorAndMotion\n\n";
         arffConstTest = arffConstTest + "@relation "+"sensorAndMotion\n\n";
         // AB The first line of CSV is for attributes SO;
         String[] attr = csvAll.get(0);
         for (int i = 0; i<attr.length; i++) {
-            if (i==6 || i==7 || i==8 || i==attr.length-2 || i==attr.length-3) continue; // CB skip Gyroscope & initials  // and Counter for now
+            if (i==6 || i==7 || i==8 || i==attr.length-2 || i==attr.length-3) continue; // CB A2 skip Gyroscope, initials, and Counter for now
 
-/*            if (i==attr.length-2) { // meaning Counter column
-                arffConstructor = arffConstructor + "@attribute " + attr[i] + " "+counterFormat+"\n";
-                arffConstTest = arffConstTest + "@attribute " + attr[i] + " "+TcounterFormat+"\n";
-            }*/
-            if (i==attr.length-1) { // meaning pattern column
+            if (i==attr.length-1) { // CB A2 meaning pattern column
                 arffConstructor = arffConstructor + "@attribute " + attr[i] + " "+patternAttr+"\n";
                 arffConstTest = arffConstTest + "@attribute " + attr[i] + " "+patternAttr+"\n";
             }
@@ -244,7 +236,6 @@ public class Convert2Arff {
         writer.write(arffConstructor);
         writerT.write(arffConstTest);
 
-        //writer.write("\n@data\n");
         // AB for the data, it is going to be a ArrayList of Strings, one way is to make
         // two for loops to handle all entries...
         for (int i = 1; i<csvAll.size()-1; i++) { // Since 0 is for attr, we will start with 1
@@ -253,21 +244,19 @@ public class Convert2Arff {
             //AB if initials equals AB or CB then this is training data
             if (dataLine[dataLine.length-2].equals("AB") || dataLine[dataLine.length-2].equals("CB")) {
                 for (int j = 0; j<dataLine.length; j++) {
-                    if (j==6 || j==7 || j==8 || j==dataLine.length-2 || j==dataLine.length-3) continue; // AB skip Gyroscope data since it is not used in this assignment // and Counter for now
+                    if (j==6 || j==7 || j==8 || j==dataLine.length-2 || j==dataLine.length-3) continue; // CB A2 skip Gyroscope and initials data since it is not used in this assignment // and Counter for now
                         //AB use A B C D instead of 1 2 3 4 && last element
                     else if (j==dataLine.length-1) writer.write(patterns[Integer.parseInt(dataLine[j])-1]+"\n");
                     else if (j<dataLine.length-3) writer.write(dataLine[j]+","); //AB if it was not the last element of the array
-                    //else writer.write(dataLine[j]+"\n"); //the last element with no comma. but go to next line
                 }
             }
             //Testing loop
             //AB if initials were anonymous then it is training data.
             else  {
                 for (int j = 0; j<dataLine.length; j++) {
-                    if (j==6 || j==7 || j==8 || j==dataLine.length-2 || j==dataLine.length-3) continue; // AB skip Gyroscope data since it is not used in this assignment
+                    if (j==6 || j==7 || j==8 || j==dataLine.length-2 || j==dataLine.length-3) continue; // AB CB A2 skip Gyroscope and initials data since it is not used in this assignment
                     else if (j==dataLine.length-1) writerT.write(patterns[Integer.parseInt(dataLine[j])-1]+"\n"); //AB use A B C D instead of 1 2 3 4
                     else if (j<dataLine.length-3) writerT.write(dataLine[j]+","); //AB if it was not the last element of the array
-                    //else writer.write(dataLine[j]+"\n"); //the last element with no comma. but go to next line
                 }
             }
         }
