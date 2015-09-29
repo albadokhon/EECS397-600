@@ -4,6 +4,8 @@
     <string name = "classifier_text">Classifier</string>
     <string name = "clusterer_text">Clusterer</string>
     <string name = "chooseVar">Choose classifier Var</string>
+    <string name = "csv2arff_button_ex1">Quick CSV 2 ARFF Ex 1</string> //CB A2
+    <string name = "csv2arff_button_ex2">Quick CSV 2 ARFF Ex 2</string> //CB A2
     <string name = "exit">Exit</string>
     <string name = "KEY_TYPE">TYPE</string>
     <string name = "classifier_trainfile">Choose the file(arff) for classifier to train</string>

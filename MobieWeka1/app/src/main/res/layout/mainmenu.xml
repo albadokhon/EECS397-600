@@ -36,10 +36,18 @@
 	android:layout_gravity="center"/>
 <Button
 	android:layout_marginTop="30px"
-	android:id="@+id/csv2arff_button"
+	android:id="@+id/csv2arff_button_ex1"
 	android:layout_width="200px"
 	android:layout_height="wrap_content"
-	android:text="Quick CSV 2 ARFF"
+	android:text="Quick CSV 2 ARFF Ex 1"
+	android:layout_gravity="center"/>
+//CB A2 Button to convert for experiment 2
+<Button
+	android:layout_marginTop="30px"
+	android:id="@+id/csv2arff_button_ex2"
+	android:layout_width="200px"
+	android:layout_height="wrap_content"
+	android:text="Quick CSV 2 ARFF Ex 2"
 	android:layout_gravity="center"/>
 <Button
 	android:layout_marginTop="30px"
