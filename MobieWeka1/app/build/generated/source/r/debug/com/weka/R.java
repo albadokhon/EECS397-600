@@ -61,18 +61,19 @@ public final class R {
         public static final int clusterer_showfile=0x7f060026;
         public static final int clustererresult_text=0x7f06002e;
         public static final int correctrate=0x7f06000c;
-        public static final int csv2arff_button=0x7f060038;
-        public static final int exit_button=0x7f060039;
-        public static final int file_text=0x7f06003d;
+        public static final int csv2arff_button_ex1=0x7f060038;
+        public static final int csv2arff_button_ex2=0x7f060039;
+        public static final int exit_button=0x7f06003a;
+        public static final int file_text=0x7f06003e;
         public static final int filedetail=0x7f060028;
         public static final int icon=0x7f060033;
         public static final int list=0x7f060030;
         public static final int load_model=0x7f060019;
         public static final int model_text=0x7f06001e;
-        public static final int savePath_edit=0x7f06003b;
+        public static final int savePath_edit=0x7f06003c;
         public static final int save_model=0x7f06001d;
-        public static final int savemodel=0x7f06003a;
-        public static final int seefile_layout=0x7f06003c;
+        public static final int savemodel=0x7f06003b;
+        public static final int seefile_layout=0x7f06003d;
         public static final int show_state=0x7f06001b;
         public static final int show_state1=0x7f06002c;
         public static final int show_state2=0x7f060008;
@@ -111,7 +112,9 @@ public final class R {
         public static final int classifier_trainfile=0x7f050005;
         public static final int clusterer_file=0x7f050006;
         public static final int clusterer_text=0x7f050007;
-        public static final int exit=0x7f050008;
-        public static final int wrong_file_warn=0x7f050009;
+        public static final int csv2arff_button_ex1=0x7f050008;
+        public static final int csv2arff_button_ex2=0x7f050009;
+        public static final int exit=0x7f05000a;
+        public static final int wrong_file_warn=0x7f05000b;
     }
 }

@@ -40,14 +40,14 @@ public class Convert2Arff {
     public boolean ReadParseCSV(String csvStr) throws Exception {
         String csvDir = android.os.Environment.getExternalStorageDirectory()+"/DCIM/CSV/";
         String csv2ArffDir = android.os.Environment.getExternalStorageDirectory()+"/DCIM/CSV2ARFF/";
-        String test = "TEST";
+        String test = "Test";
         //String csvdata = "AnalysisDataWeka.csv";
         CSVReader reader = new CSVReader(new FileReader(csvDir+csvStr));
         BufferedWriter writer = null;
         BufferedWriter writerT = null;
         List<String[]> csvAll = reader.readAll(); // AB Here we will have our csv file converted to a local ArrayList of Strings for processing.
-        Integer firstCounter = Integer.parseInt(csvAll.get(1)[csvAll.get(csvAll.size() - 1).length - 2]); // AB The first counter value
-        Integer lastCounter = Integer.parseInt(csvAll.get(csvAll.size()-1)[csvAll.get(csvAll.size()-1).length-2])+1; // AB The last counter value
+        Integer firstCounter = Integer.parseInt(csvAll.get(1)[csvAll.get(csvAll.size() - 1).length - 3]); // AB The first counter value
+        Integer lastCounter = Integer.parseInt(csvAll.get(csvAll.size()-1)[csvAll.get(csvAll.size()-1).length-3])+1; // AB The last counter value
         //String[] initials = {"AB", "CB", "U1", "U2"}; //AB CB All possible initial values
         String initials = "{AB,CB}";
         //String initialsT = "{U1,U2}";
@@ -144,28 +144,28 @@ public class Convert2Arff {
             else  {
                 for (int j = 0; j<dataLine.length; j++) {
                     if (j==6 || j==7 || j==8 || j==dataLine.length-3 || j==dataLine.length-1) continue; // AB skip Gyroscope data since it is not used in this assignment
-                    if (j<dataLine.length-2) writerT.write(dataLine[j]+","); //AB if it was not the last element of the array
+                    else if (j<dataLine.length-2) writerT.write(dataLine[j]+","); //AB if it was not the last element of the array
                     else writerT.write(dataLine[j]+"\n"); //the last element with no comma. but go to next line
                 }
             }
         }
-
         writer.close(); //AB Close and save the ARFF file
         writerT.close(); //AB Close and save the TEST ARFF file
         return true;
     }
 
+    //CB ARFF Generator for Experiment 2
     public boolean ReadParseCSVex2(String csvStr) throws Exception {
         String csvDir = android.os.Environment.getExternalStorageDirectory()+"/DCIM/CSV/";
         String csv2ArffDir = android.os.Environment.getExternalStorageDirectory()+"/DCIM/CSV2ARFF/";
-        String test = "TEST";
+        String test = "Test";
         //String csvdata = "AnalysisDataWeka.csv";
         CSVReader reader = new CSVReader(new FileReader(csvDir+csvStr));
         BufferedWriter writer = null;
         BufferedWriter writerT = null;
         List<String[]> csvAll = reader.readAll(); // AB Here we will have our csv file converted to a local ArrayList of Strings for processing.
-        Integer firstCounter = Integer.parseInt(csvAll.get(1)[csvAll.get(csvAll.size() - 1).length - 2]); // AB The first counter value
-        Integer lastCounter = Integer.parseInt(csvAll.get(csvAll.size()-1)[csvAll.get(csvAll.size()-1).length-2])+1; // AB The last counter value
+        Integer firstCounter = Integer.parseInt(csvAll.get(1)[csvAll.get(csvAll.size() - 1).length - 3]); // AB The first counter value
+        Integer lastCounter = Integer.parseInt(csvAll.get(csvAll.size()-1)[csvAll.get(csvAll.size()-1).length-3])+1; // AB The last counter value
         String[] patterns = {"A", "B", "C", "D"}; //CB All possible pattern values
         String patternAttr = "{A,B,C,D}"; // CB
         //String initials = "{AB,CB}";
@@ -189,8 +189,8 @@ public class Convert2Arff {
         String csvNoExt = csvStr.replaceFirst("[.][^.]+$", ""); // AB temp.csv --> temp (removes extension)
         //String initials = csvNoExt.substring(Math.max(csvNoExt.length() - 2, 0));
 
-        File arffFile = new File(csv2ArffDir+csvNoExt+".arff");
-        File arffTest = new File(csv2ArffDir+csvNoExt+test+".arff");
+        File arffFile = new File(csv2ArffDir+csvNoExt+"EX2"+".arff");
+        File arffTest = new File(csv2ArffDir+csvNoExt+test+"EX2"+".arff");
         String arffConstructor = ""; //AB This string will hold all the lines befor @data, because
         String arffConstTest = "";   // the same is going to be used for both training and testing
 
@@ -251,11 +251,13 @@ public class Convert2Arff {
             String[] dataLine = csvAll.get(i);
             //AB Training loop..
             //AB if initials equals AB or CB then this is training data
-            if (dataLine[dataLine.length-1].equals("AB") || dataLine[dataLine.length-1].equals("CB")) {
+            if (dataLine[dataLine.length-2].equals("AB") || dataLine[dataLine.length-2].equals("CB")) {
                 for (int j = 0; j<dataLine.length; j++) {
                     if (j==6 || j==7 || j==8 || j==dataLine.length-2 || j==dataLine.length-3) continue; // AB skip Gyroscope data since it is not used in this assignment // and Counter for now
-                    if (j<dataLine.length-1) writer.write(dataLine[j]+","); //AB if it was not the last element of the array
-                    else writer.write(dataLine[j]+"\n"); //the last element with no comma. but go to next line
+                        //AB use A B C D instead of 1 2 3 4 && last element
+                    else if (j==dataLine.length-1) writer.write(patterns[Integer.parseInt(dataLine[j])-1]+"\n");
+                    else if (j<dataLine.length-3) writer.write(dataLine[j]+","); //AB if it was not the last element of the array
+                    //else writer.write(dataLine[j]+"\n"); //the last element with no comma. but go to next line
                 }
             }
             //Testing loop
@@ -263,19 +265,14 @@ public class Convert2Arff {
             else  {
                 for (int j = 0; j<dataLine.length; j++) {
                     if (j==6 || j==7 || j==8 || j==dataLine.length-2 || j==dataLine.length-3) continue; // AB skip Gyroscope data since it is not used in this assignment
-                    if (j<dataLine.length-1) writerT.write(dataLine[j]+","); //AB if it was not the last element of the array
-                    else { //AB CB The last element with no comma. but go to next line
-                        // AB CB We have to change the initials here to AB and CB instead of U1 and U2
-                        if (dataLine[j].equals("U1")) dataLine[j] = "AB";
-                        else if (dataLine[j].equals("U2")) dataLine[j] = "CB";
-                        writerT.write(dataLine[j]+"\n");
-                    }
+                    else if (j==dataLine.length-1) writerT.write(patterns[Integer.parseInt(dataLine[j])-1]+"\n"); //AB use A B C D instead of 1 2 3 4
+                    else if (j<dataLine.length-3) writerT.write(dataLine[j]+","); //AB if it was not the last element of the array
+                    //else writer.write(dataLine[j]+"\n"); //the last element with no comma. but go to next line
                 }
             }
         }
-
-        writer.close(); //AB Close and save the ARFF file
-        writerT.close(); //AB Close and save the TEST ARFF file
+        writer.close(); //CB Close and save the ARFF file
+        writerT.close(); //CB Close and save the TEST ARFF file
         return true;
     }
 }
