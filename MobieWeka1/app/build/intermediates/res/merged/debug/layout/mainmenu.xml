@@ -26,29 +26,39 @@
 	android:layout_width="200px"
 	android:layout_height="wrap_content"
 	android:text="@string/clusterer_text"
-	android:layout_gravity="center"/>   
+	android:layout_gravity="center"/>
+
+//CB A2 fix spelling of associate
 <Button 
 	android:layout_marginTop="30px"
 	android:id="@+id/associate_button"
 	android:layout_width="200px"
 	android:layout_height="wrap_content"
-	android:text="Assoicate"
+	android:text="Associate"
 	android:layout_gravity="center"/>
-<Button
-	android:layout_marginTop="30px"
-	android:id="@+id/csv2arff_button_ex1"
-	android:layout_width="200px"
-	android:layout_height="wrap_content"
-	android:text="Quick CSV 2 ARFF Ex 1"
-	android:layout_gravity="center"/>
-//CB A2 Button to convert for experiment 2
-<Button
-	android:layout_marginTop="30px"
-	android:id="@+id/csv2arff_button_ex2"
-	android:layout_width="200px"
-	android:layout_height="wrap_content"
-	android:text="Quick CSV 2 ARFF Ex 2"
-	android:layout_gravity="center"/>
+
+//CB A2 new linear layout so that buttons have ability to be side by side
+	<LinearLayout
+		android:orientation="horizontal"
+		android:layout_marginTop="30px"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content">
+		<Button
+			android:id="@+id/csv2arff_button_ex1"
+			android:layout_width="195dp"
+			android:layout_height="wrap_content"
+			android:text="Quick CSV 2 ARFF     Ex 1"
+			android:layout_weight="0.74"/> //CB A2 adjusted width and weight so the buttons are side by side
+
+		//CB A2 Button to convert for experiment 2
+		<Button
+			android:id="@+id/csv2arff_button_ex2"
+			android:layout_width="195dp"
+			android:layout_height="wrap_content"
+			android:text="Quick CSV 2 ARFF     Ex 2"
+			android:layout_weight="0.74"/> // CB A2 adjusted width and height so buttons are side b
+	</LinearLayout>
+
 <Button
 	android:layout_marginTop="30px"
 	android:id="@+id/exit_button"
@@ -57,4 +67,4 @@
 	android:text="@string/exit"
 	android:layout_gravity="center"/>   
 </LinearLayout>
-<!-- From: file:/C:/Users/aab119/StudioProjects/EECS397-600/MobieWeka1/app/src/main/res/layout/mainmenu.xml -->
+<!-- From: file:/C:/Users/Acer/AndroidStudioProjects/EECS397-600/MobieWeka1/app/src/main/res/layout/mainmenu.xml -->

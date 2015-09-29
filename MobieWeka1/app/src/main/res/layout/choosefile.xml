@@ -28,7 +28,7 @@
 	    android:id="@+id/buttonfileCancle"  
 	    android:layout_width="125px"    
 	    android:layout_height="wrap_content"   
-	    android:text="Cancle"  />
+	    android:text="Cancel"  /> //CB A2 fixed spelling
     </LinearLayout>
 </LinearLayout>
 
