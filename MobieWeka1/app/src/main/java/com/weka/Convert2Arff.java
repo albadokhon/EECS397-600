@@ -56,16 +56,6 @@ public class Convert2Arff {
         if (lastCounter-firstCounter<50) return false;
         // 50 --> 35 training, 15 or more is testing.
 
-        // AB to produce a string with the format {0,1,2,...,lastCounter}
-/*        String TcounterFormat = "";
-        String counterFormat = "{";
-        for (int i = firstCounter; i<lastCounter-1; i++) counterFormat = counterFormat + i +",";
-        counterFormat = counterFormat + (lastCounter-1)+"}";
-
-        String[] temp = counterFormat.split(",36,");
-        counterFormat = temp[0]+"}";
-        TcounterFormat = "{36,"+temp[1];*/
-
         // AB At first we will create an empty arff file
         String csvNoExt = csvStr.replaceFirst("[.][^.]+$", ""); // AB temp.csv --> temp (removes extension)
         //String initials = csvNoExt.substring(Math.max(csvNoExt.length() - 2, 0));
@@ -132,7 +122,7 @@ public class Convert2Arff {
             String[] dataLine = csvAll.get(i);
             //AB Training loop..
             //AB if initials equals AB or CB then this is training data
-            if (dataLine[dataLine.length-1].equals("AB") || dataLine[dataLine.length-1].equals("CB")) {
+            if (dataLine[dataLine.length-2].equals("AB") || dataLine[dataLine.length-2].equals("CB")) {
                 for (int j = 0; j<dataLine.length; j++) {
                     if (j==6 || j==7 || j==8 || j==dataLine.length-3 || j==dataLine.length-1) continue; // AB CB skip Gyroscope and pattern data since it is not used in this assignment // and Counter for now
                     if (j<dataLine.length-2) writer.write(dataLine[j]+","); //AB if it was not the last element of the array
@@ -144,8 +134,11 @@ public class Convert2Arff {
             else  {
                 for (int j = 0; j<dataLine.length; j++) {
                     if (j==6 || j==7 || j==8 || j==dataLine.length-3 || j==dataLine.length-1) continue; // AB CB skip Gyroscope and pattern data since it is not used in this assignment
-                    else if (j<dataLine.length-2) writerT.write(dataLine[j]+","); //AB if it was not the last element of the array
-                    else writerT.write(dataLine[j]+"\n"); //the last element with no comma. but go to next line
+                    else if (j==dataLine.length-2) {
+                        if (dataLine[j].equals("U1") ) writerT.write("AB"+"\n"); //AB CB A2 Changing the initials to the correct user
+                        else writerT.write("CB"+"\n"); //AB CB A2 changing the initials to the correct user
+                    }
+                    else if (j<dataLine.length-3) writerT.write(dataLine[j]+","); //AB if it was not the last element of the array
                 }
             }
         }
@@ -264,4 +257,6 @@ public class Convert2Arff {
         writerT.close(); //CB Close and save the TEST ARFF file
         return true;
     }
+
+
 }
