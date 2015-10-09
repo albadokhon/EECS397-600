@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -24,7 +25,7 @@ public class MapsActivity extends FragmentActivity {
 
 
 
-    private GoogleMap mMap; // Might be null if Google Play services APK is not available.
+    private static GoogleMap mMap; // Might be null if Google Play services APK is not available.
     private Button picButton; //takes user to camera
 
     private static final int REQUEST_IMAGE_CAPTURE = 1;
@@ -74,11 +75,19 @@ public class MapsActivity extends FragmentActivity {
         // Do a null check to confirm that we have not already instantiated the map.
         if (mMap == null) {
             // Try to obtain the map from the SupportMapFragment.
-            mMap = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map))
-                    .getMap();
+            SupportMapFragment smf = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map));
+            mMap = smf.getMap();
+
             // Check if we were successful in obtaining the map.
             if (mMap != null) {
                 setUpMap();
+            }
+            else {
+                Context context = getApplicationContext();
+                CharSequence text = "Map is still NULL!";
+                int duration = Toast.LENGTH_SHORT;
+                Toast toast = Toast.makeText(context, text, duration);
+                toast.show();
             }
         }
     }
@@ -90,6 +99,7 @@ public class MapsActivity extends FragmentActivity {
      * This should only be called once and when we are sure that {@link #mMap} is not null.
      */
     private void setUpMap() {
+        mMap.setMyLocationEnabled(true);
         mMap.addMarker(new MarkerOptions().position(new LatLng(20, 20)).title("EECS397/600"));
     }
 
