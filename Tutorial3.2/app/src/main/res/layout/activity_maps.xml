@@ -20,7 +20,9 @@
         android:layout_width="120dp"
         android:layout_height="wrap_content"
         android:id="@+id/linearLO"
-        android:layout_gravity="left">
+        android:layout_gravity="left"
+        android:background="#9cffffff"
+        android:visibility="invisible">
 
         <EditText
             android:layout_width="match_parent"
