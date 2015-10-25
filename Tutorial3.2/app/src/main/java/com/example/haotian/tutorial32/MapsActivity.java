@@ -30,10 +30,12 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 
 public class MapsActivity extends FragmentActivity {
@@ -197,8 +199,25 @@ public class MapsActivity extends FragmentActivity {
                 .position(new LatLng(20, 20))
                 .title("EECS397/600")
                 .visible(true));
+        //CB Read the CSV File to add correct markers to map. First make sure the CSV trying to be read exists
+        try{
+            CSVReader reader = new CSVReader(new FileReader(MAPCSVDir + File.separator + fileName);
+            List<String[]> csvAll = reader.readAll();
 
-        //HERE Read the CSV File and Set the saved points on the Map...
+            //Adds details for every location currently saved in the CSV File onto the map
+            for (int i = 0; i < csvAll.size()-1; i++) {
+                String[] thisRow = csvAll.get(i);
+                mMap.addMarker(new MarkerOptions()
+                        .position(new LatLng(Double.parseDouble(thisRow[1]), Double.parseDouble(thisRow[2])))
+                        .title(thisRow[3])
+                        .snippet(thisRow[4])
+                        .icon(BitmapDescriptorFactory.fromFile(thisRow[5]))
+                        .visible(true));
+            }
+        }
+        catch (Exception e0) {
+
+        }
     }
 
     private void dispatchTakePictureAction() {
