@@ -103,8 +103,8 @@ public class MapsActivity extends FragmentActivity {
                 edit_snippet.setVisibility(View.INVISIBLE);
                 marker.showInfoWindow();
                 //AB CB if there was a change in the information, update the CSV file
-                if (oldTitle.equals(marker.getTitle()) || oldSnip.equals(marker.getSnippet()))
-                    updateCSVTitSnip(oldTitle, title, snippet);
+                if (!oldTitle.equals(marker.getTitle()) || !oldSnip.equals(marker.getSnippet()))
+                    updateCSVTitSnip(oldTitle, marker.getTitle(), marker.getSnippet());
                 // AB read ALL CSV File, seek for oldTitle value in data[all][3], update Array with new values of title and snippet
                 // Save the entire array back to the CSV. %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
                 return true;
@@ -196,25 +196,35 @@ public class MapsActivity extends FragmentActivity {
      */
     private void setUpMap() {
         mMap.setMyLocationEnabled(true);
-        mMap.addMarker(new MarkerOptions()
+/*        mMap.addMarker(new MarkerOptions()
                 .position(new LatLng(20, 20))
                 .title("EECS397/600")
-                .visible(true));
+                .visible(true));*/
         //CB Read the CSV File to add correct markers to map. First make sure the CSV trying to be read exists
         try{
             CSVReader reader = new CSVReader(new FileReader(MAPCSVDir + File.separator + fileName));
             List<String[]> csvAll = reader.readAll();
 
             //Adds details for every location currently saved in the CSV File onto the map
-            for (int i = 0; i < csvAll.size()-1; i++) {
+            for (int i = 1; i < csvAll.size(); i++) {
                 String[] thisRow = csvAll.get(i);
+                double lat = Double.parseDouble(thisRow[1]);
+                double lonit =  Double.parseDouble(thisRow[2]);
+
+                Context context = getApplicationContext();
+                CharSequence text = lat +", "+ lonit;
+                int duration = Toast.LENGTH_SHORT;
+                Toast toast = Toast.makeText(context, text, duration);
+                toast.show();
+
                 mMap.addMarker(new MarkerOptions()
-                        .position(new LatLng(Double.parseDouble(thisRow[1]), Double.parseDouble(thisRow[2])))
+                        .position(new LatLng(lat, lonit))
                         .title(thisRow[3])
                         .snippet(thisRow[4])
                         .icon(BitmapDescriptorFactory.fromFile(thisRow[5]))
                         .visible(true));
             }
+
         }
         catch (Exception e0) {
 
@@ -234,7 +244,7 @@ public class MapsActivity extends FragmentActivity {
             {
                 String baseDir = MAPCSVDir;
                 //System.out.println(baseDir);
-                String fileName = "MapMarkerData.csv";
+                //String fileName = "MapMarkerData.csv";
                 String filePath = baseDir + File.separator + fileName;
                 File f = new File(filePath);
                 if(!f.exists()){
@@ -285,7 +295,7 @@ public class MapsActivity extends FragmentActivity {
         try {
             CSVReader reader = new CSVReader(new FileReader(MAPCSVDir+File.separator+fileName));
             List<String[]> csvAll = reader.readAll(); // AB Here we will have our csv file converted to a local ArrayList of Strings for processing.
-            for (int j = 0; j < csvAll.size(); j++) {
+            for (int j = 1; j < csvAll.size(); j++) {
                 if (csvAll.get(j)[3].equals(oldTitle)) {
                     rowOfValue = j;
                     break;
@@ -304,6 +314,10 @@ public class MapsActivity extends FragmentActivity {
             updatedRow[3] = newTit;
             updatedRow[4] = newSnip;
             csvAll.set(rowOfValue, updatedRow);
+
+            CSVWriter writer = new CSVWriter(new FileWriter(MAPCSVDir+File.separator+fileName, false)); //AB (true) is to append into the file
+            writer.writeAll(csvAll); //AB All list String[] should be saved to CSV here
+            writer.close();
         }
         catch (Exception e0) {
 
@@ -329,7 +343,7 @@ public class MapsActivity extends FragmentActivity {
             // Set up the input
             final EditText input = new EditText(this);
             // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
-            input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+            input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_AUTO_CORRECT);
             builder.setView(input);
 
             // Set up the buttons
