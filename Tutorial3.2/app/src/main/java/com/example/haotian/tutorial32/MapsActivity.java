@@ -202,7 +202,7 @@ public class MapsActivity extends FragmentActivity {
                 .visible(true));
         //CB Read the CSV File to add correct markers to map. First make sure the CSV trying to be read exists
         try{
-            CSVReader reader = new CSVReader(new FileReader(MAPCSVDir + File.separator + fileName);
+            CSVReader reader = new CSVReader(new FileReader(MAPCSVDir + File.separator + fileName));
             List<String[]> csvAll = reader.readAll();
 
             //Adds details for every location currently saved in the CSV File onto the map
