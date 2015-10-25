@@ -1,12 +1,15 @@
 package com.example.haotian.tutorial32;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.FragmentActivity;
+import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -15,12 +18,22 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.opencsv.CSVWriter;
+import com.opencsv.CSVReader;
+
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 
 public class MapsActivity extends FragmentActivity {
@@ -36,6 +49,12 @@ public class MapsActivity extends FragmentActivity {
     private static final int REQUEST_IMAGE_CAPTURE = 1;
     private ImageView mImageView;
 
+    private String imageBldgName;
+    private String MAPCSVDir, MAPImageDir;
+    private final String[] columnCSV = {"TimeStamp", "Latitude", "Longitude",
+                                    "Building Title", "Building Snippet", "Picture Directory"};
+    private String mTimestamp;
+    private String oldTitle,oldSnip; //AB a buffer to save old marker values for comparison with CSV
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +68,8 @@ public class MapsActivity extends FragmentActivity {
         edit_snippet = (EditText) findViewById(R.id.editText2);
         edit_snippet.setHint("Snippet");
         edit_snippet.setHintTextColor(Color.BLACK);
+        textLO = (LinearLayout) findViewById(R.id.linearLO);
+
 
         picButton = (Button) findViewById(R.id.photobutton);
 
@@ -67,42 +88,57 @@ public class MapsActivity extends FragmentActivity {
                 String curTitle = marker.getTitle();
                 String curSnip = marker.getSnippet();
 
-                if (curTitle == null) curTitle="";
-                if (curSnip == null) curSnip="";
+                if (curTitle == null) curTitle = "";
+                if (curSnip == null) curSnip = "";
 
-                marker.setTitle((title.equals(""))? ( (curTitle.equals(""))? String.valueOf("No Title!") : curTitle ): title);
-                marker.setSnippet((snippet.equals(""))? ( (curSnip.equals(""))? String.valueOf("No Snippet!") : curSnip ): snippet);
+                marker.setTitle((title.equals("")) ? ((curTitle.equals("")) ? String.valueOf("No Title!") : curTitle) : title);
+                marker.setSnippet((snippet.equals("")) ? ((curSnip.equals("")) ? String.valueOf("No Snippet!") : curSnip) : snippet);
                 edit_title.setText("");
                 edit_snippet.setText("");
+                textLO.setVisibility(View.INVISIBLE);
                 edit_title.setVisibility(View.INVISIBLE);
                 edit_snippet.setVisibility(View.INVISIBLE);
                 marker.showInfoWindow();
+
+                // HERE, read ALL CSV File, seek for oldTitle value in data[all][3], update Array with new values of title and snippet
+                // Save the entire array back to the CSV. %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
                 return true;
             }
         });
         mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
             @Override
             public void onInfoWindowClick(Marker marker) {
+                oldTitle = marker.getTitle();
+                oldSnip = marker.getSnippet();
+
+                textLO.setVisibility(View.VISIBLE);
                 edit_title.setVisibility(View.VISIBLE);
                 edit_snippet.setVisibility(View.VISIBLE);
                 Context context = getApplicationContext();
                 CharSequence text = "Click on the Marker to Save, and Click anywhere on the Map to Discard..";
-                int duration = Toast.LENGTH_SHORT;
+                int duration = Toast.LENGTH_LONG;
                 Toast toast = Toast.makeText(context, text, duration);
                 toast.show();
             }
         });
 
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
-
             @Override
             public void onMapClick(LatLng latLng) {
                 edit_title.setText("");
                 edit_snippet.setText("");
+                textLO.setVisibility(View.INVISIBLE);
                 edit_title.setVisibility(View.INVISIBLE);
                 edit_snippet.setVisibility(View.INVISIBLE);
             }
         });
+        //AB Create Map CSV Folder if it does not exist.
+        MAPCSVDir = android.os.Environment.getExternalStorageDirectory()+"/DCIM/MAPCSV";
+        MAPImageDir = android.os.Environment.getExternalStorageDirectory()+"/DCIM/MapImages";
+        File CSVdir = new File(MAPCSVDir);
+        File ImageDir = new File(MAPImageDir);
+        if (!CSVdir.exists()) new File(MAPCSVDir).mkdir();
+        if (!ImageDir.exists()) new File(MAPImageDir).mkdir();
     }
 
 
@@ -161,6 +197,8 @@ public class MapsActivity extends FragmentActivity {
                 .position(new LatLng(20, 20))
                 .title("EECS397/600")
                 .visible(true));
+
+        //HERE Read the CSV File and Set the saved points on the Map...
     }
 
     private void dispatchTakePictureAction() {
@@ -169,12 +207,121 @@ public class MapsActivity extends FragmentActivity {
             startActivityForResult(takePicIntent, REQUEST_IMAGE_CAPTURE);
     }
 
+    private void saveCSV(String[] data) {
+        //AB HW3 CSV file creation
+            CSVWriter writer = null;
+            try
+            {
+                String baseDir = MAPCSVDir;
+                //System.out.println(baseDir);
+                String fileName = "MapMarkerData.csv";
+                String filePath = baseDir + File.separator + fileName;
+                File f = new File(filePath);
+                if(!f.exists()){
+                    writer = new CSVWriter(new FileWriter(filePath));
+                    String[] column = columnCSV;
+                    writer.writeNext(column);
+                    writer.close();
+                    System.out.println("CSV file Created for the first time");
+                }
+                if (f.exists()) {
+                    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd-hhmmss");
+                    mTimestamp = simpleDateFormat.format(new Date()); //AB HW3 Timestamp...
+                    data[0] = mTimestamp; //AB HW3 to store the current time.
+                    writer = new CSVWriter(new FileWriter(filePath, true)); ////AB HW3 (true) is to append into the file
+                    String[] values = data; //AB HW3 All should be strings
+                    writer.writeNext(values); //AB Means append to the file...
+                    writer.close();
+                }
+            }
+            catch (IOException e) {
+                //error
+            }
+            //AB HW3 end of CSV File creation
+
+    }
+
+    private boolean saveBitmap(String filenamedir, Bitmap image) {
+        File dest = new File(filenamedir);
+        try {
+            FileOutputStream out = new FileOutputStream(dest);
+            image.compress(Bitmap.CompressFormat.PNG, 90, out);
+            out.flush();
+            out.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             Bundle extras = data.getExtras();
-            Bitmap imageBitmap = (Bitmap) extras.get("data");
+            final Bitmap imageBitmap = (Bitmap) extras.get("data");
+            // Save This image into a directory in DCIM/MapImages
+
             //mImageView.setImageBitmap(imageBitmap); // AB CB or we can actually save it the phone DCIM/ and put it on the map from there
+            final Double latit = mMap.getMyLocation().getLatitude();
+            final Double longt = mMap.getMyLocation().getLongitude();
+
+            // Alert Text Input Block
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Title");
+
+            // Set up the input
+            final EditText input = new EditText(this);
+            // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+            input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+            builder.setView(input);
+
+            // Set up the buttons
+            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    imageBldgName = input.getText().toString();
+                    // Marker Block for picture
+                    mMap.setMyLocationEnabled(true);
+                    mMap.addMarker(new MarkerOptions()
+                            .position(new LatLng(latit, longt))
+                            .title(imageBldgName) //AB Only before modification
+                            .icon(BitmapDescriptorFactory.fromBitmap(imageBitmap))
+                            .visible(true));
+                    //End of Marker Block
+
+                    String fullImageName = MAPImageDir+File.separator+imageBldgName+".PNG";
+                    //AB Small function to save the image AND Beginning of CSV Saving block
+                    if (saveBitmap(fullImageName,imageBitmap)) {
+                        String[] markerData = {"ts", latit+"",longt+"", imageBldgName,"",fullImageName};
+                        saveCSV(markerData);
+                    }
+                    else {
+                        Context context = getApplicationContext();
+                        CharSequence text = "There was a problem saving the image!";
+                        int duration = Toast.LENGTH_SHORT;
+                        Toast toast = Toast.makeText(context, text, duration);
+                        toast.show();
+                    }
+                    // Store CSV File Entry HERE....
+
+
+                }
+            });
+            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.cancel();
+                    Context context = getApplicationContext();
+                    CharSequence text = "Once you relaunch the app, you WON'T be able to see this marker!";
+                    int duration = Toast.LENGTH_SHORT;
+                    Toast toast = Toast.makeText(context, text, duration);
+                    toast.show();
+                }
+            });
+            builder.show();
+
+            //End of Alert Input Block
             Context context = getApplicationContext();
             CharSequence text = mMap.getMyLocation().getLatitude()+ ",  "+mMap.getMyLocation().getLongitude();
             int duration = Toast.LENGTH_SHORT;
