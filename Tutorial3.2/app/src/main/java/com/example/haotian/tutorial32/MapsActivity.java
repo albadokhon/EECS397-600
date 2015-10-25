@@ -56,8 +56,7 @@ public class MapsActivity extends FragmentActivity {
     private final String[] columnCSV = {"TimeStamp", "Latitude", "Longitude",
                                     "Building Title", "Building Snippet", "Picture Directory"};
     private String mTimestamp;
-    private String oldTitle,oldSnip; //AB a buffer to save old marker values for comparison with CSV
-
+    private final String fileName = "MapMarkerData.csv";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -87,22 +86,26 @@ public class MapsActivity extends FragmentActivity {
             public boolean onMarkerClick(Marker marker) {
                 String title = String.valueOf(edit_title.getText());
                 String snippet = String.valueOf(edit_snippet.getText());
-                String curTitle = marker.getTitle();
-                String curSnip = marker.getSnippet();
+                String oldTitle = marker.getTitle();
+                String oldSnip = marker.getSnippet();
 
-                if (curTitle == null) curTitle = "";
-                if (curSnip == null) curSnip = "";
+                if (oldTitle == null) oldTitle = "";
+                if (oldSnip == null) oldSnip = "";
 
-                marker.setTitle((title.equals("")) ? ((curTitle.equals("")) ? String.valueOf("No Title!") : curTitle) : title);
-                marker.setSnippet((snippet.equals("")) ? ((curSnip.equals("")) ? String.valueOf("No Snippet!") : curSnip) : snippet);
+                // (Statement) ? if true : if not true;
+
+                marker.setTitle((title.equals("")) ? ((oldTitle.equals("")) ? String.valueOf("No Title!") : oldTitle) : title);
+                marker.setSnippet((snippet.equals("")) ? ((oldSnip.equals("")) ? String.valueOf("No Snippet!") : oldSnip) : snippet);
                 edit_title.setText("");
                 edit_snippet.setText("");
                 textLO.setVisibility(View.INVISIBLE);
                 edit_title.setVisibility(View.INVISIBLE);
                 edit_snippet.setVisibility(View.INVISIBLE);
                 marker.showInfoWindow();
-
-                // HERE, read ALL CSV File, seek for oldTitle value in data[all][3], update Array with new values of title and snippet
+                //AB CB if there was a change in the information, update the CSV file
+                if (oldTitle.equals(marker.getTitle()) || oldSnip.equals(marker.getSnippet()))
+                    updateCSVTitSnip(oldTitle, title, snippet);
+                // AB read ALL CSV File, seek for oldTitle value in data[all][3], update Array with new values of title and snippet
                 // Save the entire array back to the CSV. %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
                 return true;
             }
@@ -110,8 +113,6 @@ public class MapsActivity extends FragmentActivity {
         mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
             @Override
             public void onInfoWindowClick(Marker marker) {
-                oldTitle = marker.getTitle();
-                oldSnip = marker.getSnippet();
 
                 textLO.setVisibility(View.VISIBLE);
                 edit_title.setVisibility(View.VISIBLE);
@@ -201,7 +202,7 @@ public class MapsActivity extends FragmentActivity {
                 .visible(true));
         //CB Read the CSV File to add correct markers to map. First make sure the CSV trying to be read exists
         try{
-            CSVReader reader = new CSVReader(new FileReader(MAPCSVDir + File.separator + fileName);
+            CSVReader reader = new CSVReader(new FileReader(MAPCSVDir + File.separator + fileName));
             List<String[]> csvAll = reader.readAll();
 
             //Adds details for every location currently saved in the CSV File onto the map
@@ -260,6 +261,7 @@ public class MapsActivity extends FragmentActivity {
 
     }
 
+    //AB CB a function to save the captured picture as a PNG image in a directory in DCIM
     private boolean saveBitmap(String filenamedir, Bitmap image) {
         File dest = new File(filenamedir);
         try {
@@ -272,6 +274,41 @@ public class MapsActivity extends FragmentActivity {
             return false;
         }
         return true;
+    }
+
+
+    //AB CB if there was a change in the information
+    // AB read ALL CSV File, seek for oldTitle value in data[all][3], update Array with new values of title and snippet
+    // Save the entire array back to the CSV.
+    private void updateCSVTitSnip (String oldTitle, String newTit, String newSnip) {
+        int rowOfValue = -1;
+        try {
+            CSVReader reader = new CSVReader(new FileReader(MAPCSVDir+File.separator+fileName));
+            List<String[]> csvAll = reader.readAll(); // AB Here we will have our csv file converted to a local ArrayList of Strings for processing.
+            for (int j = 0; j < csvAll.size(); j++) {
+                if (csvAll.get(j)[3].equals(oldTitle)) {
+                    rowOfValue = j;
+                    break;
+                }
+                else if (j == csvAll.size()-1) { //AB Meaning last one and value was not found...
+                    Context context = getApplicationContext();
+                    CharSequence text = "There was a problem finding the original value!!";
+                    int duration = Toast.LENGTH_SHORT;
+                    Toast toast = Toast.makeText(context, text, duration);
+                    toast.show();
+                    return; // AB to get out of the function without continuing the data process.
+                }
+            }
+            if (rowOfValue == -1) return; // AB to get out of the function without continuing the data process.
+            String[] updatedRow = csvAll.get(rowOfValue);
+            updatedRow[3] = newTit;
+            updatedRow[4] = newSnip;
+            csvAll.set(rowOfValue, updatedRow);
+        }
+        catch (Exception e0) {
+
+        }
+
     }
 
     @Override
