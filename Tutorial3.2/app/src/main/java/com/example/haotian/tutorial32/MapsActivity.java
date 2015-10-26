@@ -212,8 +212,8 @@ public class MapsActivity extends FragmentActivity {
             //CB Adds details for every location currently saved in the CSV File onto the map
             for (int i = 1; i < csvAll.size(); i++) { //CB start from 1, 0 is for column names in csv
                 String[] thisRow = csvAll.get(i);
-                double lat = Double.parseDouble(thisRow[1]);
-                double lonit =  Double.parseDouble(thisRow[2]);
+                float lat = Float.parseFloat(thisRow[1]);
+                float lonit =  Float.parseFloat(thisRow[2]);
 
                 Context context = getApplicationContext();
                 CharSequence text = lat +", "+ lonit;
