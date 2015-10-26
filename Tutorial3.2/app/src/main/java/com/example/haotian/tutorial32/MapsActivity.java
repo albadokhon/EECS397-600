@@ -46,10 +46,9 @@ public class MapsActivity extends FragmentActivity {
 
     private static GoogleMap mMap; // Might be null if Google Play services APK is not available.
     private Button picButton; //takes user to camera
-    private EditText edit_title, edit_snippet;
-    private LinearLayout textLO;
+    private EditText edit_title, edit_snippet; // AB two EditText views to update Marker info.
+    private LinearLayout textLO; // AB The layout used for the Text Editors.
     private static final int REQUEST_IMAGE_CAPTURE = 1;
-    private ImageView mImageView;
 
     private String imageBldgName;
     private String MAPCSVDir, MAPImageDir;
@@ -57,12 +56,14 @@ public class MapsActivity extends FragmentActivity {
                                     "Building Title", "Building Snippet", "Picture Directory"};
     private String mTimestamp;
     private final String fileName = "MapMarkerData.csv";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
         setUpMapIfNeeded();
 
+        // AB Initializing EditText fields and Layout
         edit_title = (EditText) findViewById(R.id.editText);
         edit_title.setHint("Title");
         edit_title.setHintTextColor(Color.BLACK);
@@ -81,6 +82,9 @@ public class MapsActivity extends FragmentActivity {
             }
         });
 
+        // AB CB Here we set a listener to when the marker icon is touched
+        // only to compare with EditText updates for title and snippet
+        // and save the new values, if any, to the marker information
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
@@ -105,15 +109,14 @@ public class MapsActivity extends FragmentActivity {
                 //AB CB if there was a change in the information, update the CSV file
                 if (!oldTitle.equals(marker.getTitle()) || !oldSnip.equals(marker.getSnippet()))
                     updateCSVTitSnip(oldTitle, marker.getTitle(), marker.getSnippet());
-                // AB read ALL CSV File, seek for oldTitle value in data[all][3], update Array with new values of title and snippet
-                // Save the entire array back to the CSV. %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
                 return true;
             }
         });
+        // AB CB a listener was added to the InformationWindow of the marker to only view the update
+        // fields only if it was touched.
         mMap.setOnInfoWindowClickListener(new GoogleMap.OnInfoWindowClickListener() {
             @Override
             public void onInfoWindowClick(Marker marker) {
-
                 textLO.setVisibility(View.VISIBLE);
                 edit_title.setVisibility(View.VISIBLE);
                 edit_snippet.setVisibility(View.VISIBLE);
@@ -124,7 +127,8 @@ public class MapsActivity extends FragmentActivity {
                 toast.show();
             }
         });
-
+        // AB CB The listener here is to discard any changes that were made on the update view
+        // because the user touched the map instead of the marker, which would have saved the values.
         mMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng latLng) {
@@ -205,8 +209,8 @@ public class MapsActivity extends FragmentActivity {
             CSVReader reader = new CSVReader(new FileReader(MAPCSVDir + File.separator + fileName));
             List<String[]> csvAll = reader.readAll();
 
-            //Adds details for every location currently saved in the CSV File onto the map
-            for (int i = 1; i < csvAll.size(); i++) {
+            //CB Adds details for every location currently saved in the CSV File onto the map
+            for (int i = 1; i < csvAll.size(); i++) { //CB start from 1, 0 is for column names in csv
                 String[] thisRow = csvAll.get(i);
                 double lat = Double.parseDouble(thisRow[1]);
                 double lonit =  Double.parseDouble(thisRow[2]);
@@ -216,7 +220,7 @@ public class MapsActivity extends FragmentActivity {
                 int duration = Toast.LENGTH_SHORT;
                 Toast toast = Toast.makeText(context, text, duration);
                 toast.show();
-
+                // CB Add the read values and plot them to the map (BETA) still in progress.
                 mMap.addMarker(new MarkerOptions()
                         .position(new LatLng(lat, lonit))
                         .title(thisRow[3])
@@ -227,18 +231,18 @@ public class MapsActivity extends FragmentActivity {
 
         }
         catch (Exception e0) {
-
+            e0.printStackTrace();
         }
     }
-
+    // AB CB function to prompt the camera view. Results are handled in OnActivityResult()
     private void dispatchTakePictureAction() {
         Intent takePicIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (takePicIntent.resolveActivity((getPackageManager())) != null)
             startActivityForResult(takePicIntent, REQUEST_IMAGE_CAPTURE);
     }
-
+    // AB function to save or append new CSV data, (TS, Lat, Longt, Title, snip, pic_dir)
     private void saveCSV(String[] data) {
-        //AB HW3 CSV file creation
+        //AB CSV file creation
             CSVWriter writer = null;
             try
             {
@@ -256,10 +260,10 @@ public class MapsActivity extends FragmentActivity {
                 }
                 if (f.exists()) {
                     SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd-hhmmss");
-                    mTimestamp = simpleDateFormat.format(new Date()); //AB HW3 Timestamp...
-                    data[0] = mTimestamp; //AB HW3 to store the current time.
-                    writer = new CSVWriter(new FileWriter(filePath, true)); ////AB HW3 (true) is to append into the file
-                    String[] values = data; //AB HW3 All should be strings
+                    mTimestamp = simpleDateFormat.format(new Date()); //AB Timestamp...
+                    data[0] = mTimestamp; //AB to store the current time.
+                    writer = new CSVWriter(new FileWriter(filePath, true)); ////AB (true) is to append into the file
+                    String[] values = data; //AB All should be strings
                     writer.writeNext(values); //AB Means append to the file...
                     writer.close();
                 }
@@ -267,7 +271,7 @@ public class MapsActivity extends FragmentActivity {
             catch (IOException e) {
                 //error
             }
-            //AB HW3 end of CSV File creation
+            //AB end of CSV File creation
 
     }
 
@@ -332,21 +336,22 @@ public class MapsActivity extends FragmentActivity {
             final Bitmap imageBitmap = (Bitmap) extras.get("data");
             // Save This image into a directory in DCIM/MapImages
 
-            //mImageView.setImageBitmap(imageBitmap); // AB CB or we can actually save it the phone DCIM/ and put it on the map from there
+            // AB CB we want to save the Bitmap image to the phone DCIM/ and put it on the map from there
             final Double latit = mMap.getMyLocation().getLatitude();
             final Double longt = mMap.getMyLocation().getLongitude();
 
-            // Alert Text Input Block
+            // AB Alert Text Input Block, to have a title to the image and marker.
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle("Title");
 
-            // Set up the input
+            // AB Set up the input
             final EditText input = new EditText(this);
-            // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+            // AB Specify the type of input expected; this, for example, sets the input with autocurrect feature
             input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_AUTO_CORRECT);
             builder.setView(input);
 
-            // Set up the buttons
+            // AB Set up the buttons for the dialog, only if ok is pressed, then plot the new marker
+            // and save the image with the title typed.
             builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
@@ -359,12 +364,11 @@ public class MapsActivity extends FragmentActivity {
                             .icon(BitmapDescriptorFactory.fromBitmap(imageBitmap))
                             .visible(true));
                     //End of Marker Block
-
                     String fullImageName = MAPImageDir+File.separator+imageBldgName+".PNG";
                     //AB Small function to save the image AND Beginning of CSV Saving block
-                    if (saveBitmap(fullImageName,imageBitmap)) {
+                    if (saveBitmap(fullImageName,imageBitmap)) { // AB if saving image went through...
                         String[] markerData = {"ts", latit+"",longt+"", imageBldgName,"",fullImageName};
-                        saveCSV(markerData);
+                        saveCSV(markerData); // AB Here save or append values to the csv
                     }
                     else {
                         Context context = getApplicationContext();
@@ -373,11 +377,11 @@ public class MapsActivity extends FragmentActivity {
                         Toast toast = Toast.makeText(context, text, duration);
                         toast.show();
                     }
-                    // Store CSV File Entry HERE....
-
+                    // AB Store CSV File Entry HERE....
 
                 }
             });
+            // AB Here we handle if user canceled, just don't polt marker or save csv.
             builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
@@ -390,8 +394,8 @@ public class MapsActivity extends FragmentActivity {
                 }
             });
             builder.show();
+            // AB End of Alert Input Block
 
-            //End of Alert Input Block
             Context context = getApplicationContext();
             CharSequence text = mMap.getMyLocation().getLatitude()+ ",  "+mMap.getMyLocation().getLongitude();
             int duration = Toast.LENGTH_SHORT;
@@ -400,5 +404,4 @@ public class MapsActivity extends FragmentActivity {
 
         }
     }
-
 }
