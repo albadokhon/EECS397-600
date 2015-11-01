@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -61,6 +62,14 @@ public class MapsActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+        //AB Create Map CSV Folder if it does not exist.
+        MAPCSVDir = android.os.Environment.getExternalStorageDirectory()+"/DCIM/MAPCSV";
+        MAPImageDir = android.os.Environment.getExternalStorageDirectory()+"/DCIM/MapImages";
+        File CSVdir = new File(MAPCSVDir);
+        File ImageDir = new File(MAPImageDir);
+        if (!CSVdir.exists()) new File(MAPCSVDir).mkdir();
+        if (!ImageDir.exists()) new File(MAPImageDir).mkdir();
+
         setUpMapIfNeeded();
 
         // AB Initializing EditText fields and Layout
@@ -139,13 +148,6 @@ public class MapsActivity extends FragmentActivity {
                 edit_snippet.setVisibility(View.INVISIBLE);
             }
         });
-        //AB Create Map CSV Folder if it does not exist.
-        MAPCSVDir = android.os.Environment.getExternalStorageDirectory()+"/DCIM/MAPCSV";
-        MAPImageDir = android.os.Environment.getExternalStorageDirectory()+"/DCIM/MapImages";
-        File CSVdir = new File(MAPCSVDir);
-        File ImageDir = new File(MAPImageDir);
-        if (!CSVdir.exists()) new File(MAPCSVDir).mkdir();
-        if (!ImageDir.exists()) new File(MAPImageDir).mkdir();
     }
 
 
@@ -221,11 +223,12 @@ public class MapsActivity extends FragmentActivity {
                 Toast toast = Toast.makeText(context, text, duration);
                 toast.show();
                 // CB Add the read values and plot them to the map (BETA) still in progress.
+                Bitmap temp = BitmapFactory.decodeFile(thisRow[5]);
                 mMap.addMarker(new MarkerOptions()
                         .position(new LatLng(lat, lonit))
                         .title(thisRow[3])
                         .snippet(thisRow[4])
-                        .icon(BitmapDescriptorFactory.fromFile(thisRow[5]))
+                        .icon(BitmapDescriptorFactory.fromBitmap(temp))
                         .visible(true));
             }
 
