@@ -110,7 +110,7 @@ public class BluetoothChatFragment extends Fragment {
         if (!mBluetoothAdapter.isEnabled()) {
             Intent enableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
             startActivityForResult(enableIntent, REQUEST_ENABLE_BT);
-            // Otherwise, setup the chat session
+            // CB Might need to do something else here... Otherwise, setup the chat session
         } else if (mChatService == null) {
             setupChat();
         }
@@ -354,6 +354,12 @@ public class BluetoothChatFragment extends Fragment {
         }
     }
 
+    //CB Method that is supposed to get a list of devices that have already been paired. I am not using the adapter function properly to find context
+    public void getPairedList(View v) {
+        ArrayAdapter adapter = new ArrayAdapter(R.layout.activity_device_list,mBluetoothAdapter.getBondedDevices());
+        ListView listView = (ListView)findViewByID(R.id.paired_devices);
+        listView.setAdapter(adapter);
+    }
     /**
      * Establish connection with other divice
      *
