@@ -15,4 +15,32 @@
         android:id="@+id/photobutton"
         android:text="Take a picture"/>
 
-    </FrameLayout>
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:id="@+id/linearLO"
+        android:layout_gravity="left"
+        android:background="#9cffffff"
+        android:visibility="invisible">
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/editText"
+            android:layout_gravity="center_horizontal"
+            android:visibility="invisible"
+            android:autoText="false" />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:inputType="textMultiLine"
+            android:ems="10"
+            android:id="@+id/editText2"
+            android:layout_gravity="center_horizontal"
+            android:visibility="invisible"
+            android:editable="true" />
+    </LinearLayout>
+
+</FrameLayout>
