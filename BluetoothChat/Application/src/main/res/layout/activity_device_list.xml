@@ -19,6 +19,10 @@
               android:orientation="vertical"
     >
 
+    //CB Add the information about the device name,
+    //address, bluetooth class, and class of device into the GUI.
+    // Unsure if this is done by creating a new id/text view for all categories
+    //tried to follow this website: https://github.com/codepath/android_guides/wiki/Using-an-ArrayAdapter-with-ListView
     <TextView
         android:id="@+id/title_paired_devices"
         android:layout_width="match_parent"
@@ -30,6 +34,36 @@
         android:visibility="gone"
         />
 
+    <TextView
+        android:id="@+id/device_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Device Name"/>
+
+    <TextView
+        android:id="@+id/address"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Address"/>
+
+    <TextView
+        android:id="@+id/bond_state"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Bond State"/>
+
+    <TextView
+        android:id="@+id/bluetooth_class"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Bluetooth Class"/>
+
+    <TextView
+        android:id="@+id/device_class"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Class of the Device"/>
+
     <ListView
         android:id="@+id/paired_devices"
         android:layout_width="match_parent"
@@ -37,7 +71,7 @@
         android:layout_weight="1"
         android:stackFromBottom="true"
         />
-
+<!--
     <TextView
         android:id="@+id/title_new_devices"
         android:layout_width="match_parent"
@@ -55,7 +89,7 @@
         android:layout_height="wrap_content"
         android:layout_weight="2"
         android:stackFromBottom="true"
-        />
+        />-->
 
     <Button
         android:id="@+id/button_scan"
