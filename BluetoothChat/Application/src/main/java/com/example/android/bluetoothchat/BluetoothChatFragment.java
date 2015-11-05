@@ -43,6 +43,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.android.common.logger.Log;
+import com.opencsv.CSVWriter;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * This fragment controls Bluetooth to communicate with other devices.
@@ -86,10 +94,21 @@ public class BluetoothChatFragment extends Fragment {
      */
     private BluetoothChatService mChatService = null;
 
+    //CB variables to save information for CSV
+    private String SENSORCSVDIR;
+    private final String[] columnCSV = {"TimeStamp", "Light", "UV", "Motion", "Moisture"};
+    private String mTimestamp;
+    private final String fileName = "SensorData.csv";
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+        //CB save information necessary for CSV creation
+        SENSORCSVDIR = android.os.Environment.getExternalStorageDirectory() + "/DCIM/SensorCSV";
+        File CSVdir = new File(SENSORCSVDIR);
+        if (!CSVdir.exists()) new File(SENSORCSVDIR).mkdir();
+
         // Get local Bluetooth adapter
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
@@ -273,7 +292,7 @@ public class BluetoothChatFragment extends Fragment {
     }
 
     /**
-     * The Handler that gets information back from the BluetoothChatService
+     * CB The Handler that gets information back from the BluetoothChatService and will also save into a CSV
      */
     private final Handler mHandler = new Handler() {
         @Override
@@ -305,6 +324,13 @@ public class BluetoothChatFragment extends Fragment {
                     byte[] readBuf = (byte[]) msg.obj;
                     // construct a string from the valid bytes in the buffer
                     String readMessage = new String(readBuf, 0, msg.arg1);
+                    //CB Here we'll save readMessage in a CSV file
+                    String[] incomingData = readMessage.split(",");
+                    //ArrayList<String> als
+                    //incoming
+                    if (incomingData.length==4) //AB CB we have 4 sensor values in the format 45,65,45....?
+                        saveCSV(incomingData);
+                    else System.out.println("Chat recieved Does not comply...");
                     mConversationArrayAdapter.add(mConnectedDeviceName + ":  " + readMessage);
                     break;
                 case Constants.MESSAGE_DEVICE_NAME:
@@ -399,4 +425,36 @@ public class BluetoothChatFragment extends Fragment {
         return false;
     }
 
+    //CB Method to save CSV
+    private void saveCSV(String[] data) {
+
+        //CB CSV file creation
+        CSVWriter writer = null;
+        try {
+            String baseDir = SENSORCSVDIR;
+            String filePath = baseDir + File.separator + fileName;
+            File f = new File(filePath);
+            if (!f.exists()) {
+                writer = new CSVWriter(new FileWriter(filePath));
+                String[] column = columnCSV;
+                writer.writeNext(column);
+                writer.close();
+                System.out.println("CSV file Created for the first time");
+            }
+            if (f.exists()) {
+                String[] alldata = new String[5]; //AB 5 values from 0 to 4
+                for (int i = 1; i < alldata.length; i++) //AB 1 to 4
+                    alldata[i] = data[i-1];
+                SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd-hhmmss");
+                mTimestamp = simpleDateFormat.format(new Date()); //AB Timestamp...
+                alldata[0] = mTimestamp; //CB to store the current time.
+                writer = new CSVWriter(new FileWriter(filePath, true));
+                String[] values = alldata; //CB All should be strings
+                writer.writeNext(values); //CB Means append to the file...
+                writer.close();
+            }
+        } catch (IOException e) {
+            //error
+        }
+    }
 }
