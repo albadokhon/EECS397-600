@@ -19,4 +19,4 @@
           android:showAsAction="always"
           android:title="@string/sample_show_log" />
 </menu>
-<!-- From: file:/C:/Users/Acer/AndroidStudioProjects/EECS397-600/EECS397-600/BluetoothChat/Application/src/main/res/menu/main.xml -->
+<!-- From: file:/C:/Users/aab119/StudioProjects/EECS397-600/BluetoothChat/Application/src/main/res/menu/main.xml -->
