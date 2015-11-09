@@ -326,8 +326,6 @@ public class BluetoothChatFragment extends Fragment {
                     String readMessage = new String(readBuf, 0, msg.arg1);
                     //CB Here we'll save readMessage in a CSV file
                     String[] incomingData = readMessage.split(",");
-                    //ArrayList<String> als
-                    //incoming
                     if (incomingData.length==4) //AB CB we have 4 sensor values in the format 45,65,45....?
                         saveCSV(incomingData);
                     else System.out.println("Chat recieved Does not comply...");
