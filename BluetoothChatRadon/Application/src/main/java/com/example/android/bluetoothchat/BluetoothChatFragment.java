@@ -51,6 +51,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import com.google.android.gms.maps.GoogleMap;
 
 /**
  * This fragment controls Bluetooth to communicate with other devices.
@@ -93,6 +94,7 @@ public class BluetoothChatFragment extends Fragment {
      * Member object for the chat services
      */
     private BluetoothChatService mChatService = null;
+    private static GoogleMap mMap;
 
     //CB variables to save information for CSV
     private String SENSORCSVDIR;
@@ -326,7 +328,7 @@ public class BluetoothChatFragment extends Fragment {
                     String readMessage = new String(readBuf, 0, msg.arg1);
                     //CB Here we'll save readMessage in a CSV file
                     String[] incomingData = readMessage.split(",");
-                    if (incomingData.length==4) //AB CB we have 4 sensor values in the format 45,65,45....?
+                    if (incomingData.length==5) //AB CB we have 4 sensor values in the format 45,65,45....?
                         saveCSV(incomingData);
                     else System.out.println("Chat recieved Does not comply...");
                     mConversationArrayAdapter.add(mConnectedDeviceName + ":  " + readMessage);
@@ -440,12 +442,13 @@ public class BluetoothChatFragment extends Fragment {
                 System.out.println("CSV file Created for the first time");
             }
             if (f.exists()) {
-                String[] alldata = new String[5]; //AB 5 values from 0 to 4
-                for (int i = 1; i < alldata.length; i++) //AB 1 to 4
+                String[] alldata = new String[7]; //AB 5 values from 0 to 6
+                for (int i = 1; i < alldata.length; i++) //AB 1 to 6
                     alldata[i] = data[i-1];
                 SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd-hhmmss");
                 mTimestamp = simpleDateFormat.format(new Date()); //AB Timestamp...
                 alldata[0] = mTimestamp; //CB to store the current time.
+                alldata[7] = mMap.getMyLocation().getLatitude() + "," + mMap.getMyLocation().getLongitude();
                 writer = new CSVWriter(new FileWriter(filePath, true));
                 String[] values = alldata; //CB All should be strings
                 writer.writeNext(values); //CB Means append to the file...
