@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        jar="C:\Users\aab119\StudioProjects\EECS397-600\BluetoothChat\Application\build\intermediates\exploded-aar\com.android.support\support-v4\23.0.0\jars\libs\internal_impl-23.0.0.jar"
+        jumboMode="false"
+        revision="23.0.0"
+        sha1="8bd336eeae661e8311330284897ee07f8ebaa297">
+        <dex dex="C:\Users\aab119\StudioProjects\EECS397-600\BluetoothChat\Application\build\intermediates\pre-dexed\debug\internal_impl-23.0.0-2a81516456ee1fe470d8a6dcc7017edbf194e1af.jar" />
+    </item>
+    <item
+        jar="C:\Users\aab119\.gradle\caches\modules-2\files-2.1\com.opencsv\opencsv\3.5\2e88bd2818506573280599398f4198a04b2b2c8c\opencsv-3.5.jar"
+        jumboMode="false"
+        revision="23.0.0"
+        sha1="2e88bd2818506573280599398f4198a04b2b2c8c">
+        <dex dex="C:\Users\aab119\StudioProjects\EECS397-600\BluetoothChat\Application\build\intermediates\pre-dexed\debug\opencsv-3.5-721da4551c06eba6caf66823987015bb454b73ba.jar" />
+    </item>
+    <item
+        jar="C:\Users\aab119\StudioProjects\EECS397-600\BluetoothChat\Application\build\intermediates\exploded-aar\com.android.support\gridlayout-v7\23.0.0\jars\classes.jar"
+        jumboMode="false"
+        revision="23.0.0"
+        sha1="1618fd467fb5971c394741e8976ededb97aaee0a">
+        <dex dex="C:\Users\aab119\StudioProjects\EECS397-600\BluetoothChat\Application\build\intermediates\pre-dexed\debug\classes-6e88267a82930a3cf21f60696d03f21fa62f595c.jar" />
+    </item>
+    <item
+        jar="C:\Users\aab119\StudioProjects\EECS397-600\BluetoothChat\Application\build\intermediates\exploded-aar\com.android.support\support-v4\23.0.0\jars\classes.jar"
+        jumboMode="false"
+        revision="23.0.0"
+        sha1="8413c27b45b7fe61dca4a98159f65e2cee215f5a">
+        <dex dex="C:\Users\aab119\StudioProjects\EECS397-600\BluetoothChat\Application\build\intermediates\pre-dexed\debug\classes-2f6935817d4d8109ba4e5843bd0ecaa5031420ee.jar" />
+    </item>
+    <item
+        jar="C:\Users\aab119\.gradle\caches\modules-2\files-2.1\org.apache.commons\commons-lang3\3.3.2\90a3822c38ec8c996e84c16a3477ef632cbc87a3\commons-lang3-3.3.2.jar"
+        jumboMode="false"
+        revision="23.0.0"
+        sha1="90a3822c38ec8c996e84c16a3477ef632cbc87a3">
+        <dex dex="C:\Users\aab119\StudioProjects\EECS397-600\BluetoothChat\Application\build\intermediates\pre-dexed\debug\commons-lang3-3.3.2-9a3118434aa82810a85248c82e813a5cdd212b09.jar" />
+    </item>
+    <item
+        jar="C:\Users\aab119\StudioProjects\EECS397-600\BluetoothChat\Application\build\intermediates\exploded-aar\com.android.support\cardview-v7\23.0.0\jars\classes.jar"
+        jumboMode="false"
+        revision="23.0.0"
+        sha1="1ccbc26be2c465c622a48310e8092241b01abe80">
+        <dex dex="C:\Users\aab119\StudioProjects\EECS397-600\BluetoothChat\Application\build\intermediates\pre-dexed\debug\classes-25b0cd8fdcafea30409abbb6854781abe8887124.jar" />
+    </item>
+    <item
+        jar="C:\Program Files (x86)\Android\sdk\extras\android\m2repository\com\android\support\support-annotations\23.0.0\support-annotations-23.0.0.jar"
+        jumboMode="false"
+        revision="23.0.0"
+        sha1="990e7f98a7bad86a40b1f0bcfeb039023afd0839">
+        <dex dex="C:\Users\aab119\StudioProjects\EECS397-600\BluetoothChat\Application\build\intermediates\pre-dexed\debug\support-annotations-23.0.0-2db960bf672055589063014515e3be5ca99eef49.jar" />
+    </item>
+
+</items>
