@@ -65,6 +65,9 @@ public class BluetoothChatFragment extends Fragment {
     private static final int REQUEST_CONNECT_DEVICE_INSECURE = 2;
     private static final int REQUEST_ENABLE_BT = 3;
 
+    private final Double latit = mMap.getMyLocation().getLatitude();
+    private final Double longt = mMap.getMyLocation().getLongitude();
+
     // Layout Views
     private ListView mConversationView;
     private EditText mOutEditText;
@@ -106,6 +109,7 @@ public class BluetoothChatFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+        mMap.setMyLocationEnabled(true);
         //CB save information necessary for CSV creation
         SENSORCSVDIR = android.os.Environment.getExternalStorageDirectory() + "/DCIM/SensorCSV";
         File CSVdir = new File(SENSORCSVDIR);
@@ -328,7 +332,7 @@ public class BluetoothChatFragment extends Fragment {
                     String readMessage = new String(readBuf, 0, msg.arg1);
                     //CB Here we'll save readMessage in a CSV file
                     String[] incomingData = readMessage.split(",");
-                    if (incomingData.length==5) //AB CB we have 4 sensor values in the format 45,65,45....?
+                    if (incomingData.length==4) //AB CB we have 4 sensor values in the format 45,65,45....?
                         saveCSV(incomingData);
                     else System.out.println("Chat recieved Does not comply...");
                     mConversationArrayAdapter.add(mConnectedDeviceName + ":  " + readMessage);
@@ -442,13 +446,12 @@ public class BluetoothChatFragment extends Fragment {
                 System.out.println("CSV file Created for the first time");
             }
             if (f.exists()) {
-                String[] alldata = new String[7]; //AB 5 values from 0 to 6
-                for (int i = 1; i < alldata.length; i++) //AB 1 to 6
+                String[] alldata = new String[5]; //AB 5 values from 0 to 4
+                for (int i = 1; i < alldata.length; i++) //AB 1 to 4
                     alldata[i] = data[i-1];
                 SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd-hhmmss");
                 mTimestamp = simpleDateFormat.format(new Date()); //AB Timestamp...
                 alldata[0] = mTimestamp; //CB to store the current time.
-                alldata[7] = mMap.getMyLocation().getLatitude() + "," + mMap.getMyLocation().getLongitude();
                 writer = new CSVWriter(new FileWriter(filePath, true));
                 String[] values = alldata; //CB All should be strings
                 writer.writeNext(values); //CB Means append to the file...
