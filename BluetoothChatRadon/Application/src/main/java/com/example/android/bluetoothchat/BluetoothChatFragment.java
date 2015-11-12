@@ -51,6 +51,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import com.google.android.gms.maps.GoogleMap;
 
 /**
  * This fragment controls Bluetooth to communicate with other devices.
@@ -63,6 +64,9 @@ public class BluetoothChatFragment extends Fragment {
     private static final int REQUEST_CONNECT_DEVICE_SECURE = 1;
     private static final int REQUEST_CONNECT_DEVICE_INSECURE = 2;
     private static final int REQUEST_ENABLE_BT = 3;
+
+    private final Double latit = mMap.getMyLocation().getLatitude();
+    private final Double longt = mMap.getMyLocation().getLongitude();
 
     // Layout Views
     private ListView mConversationView;
@@ -93,6 +97,7 @@ public class BluetoothChatFragment extends Fragment {
      * Member object for the chat services
      */
     private BluetoothChatService mChatService = null;
+    private static GoogleMap mMap;
 
     //CB variables to save information for CSV
     private String SENSORCSVDIR;
@@ -104,6 +109,7 @@ public class BluetoothChatFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+        mMap.setMyLocationEnabled(true);
         //CB save information necessary for CSV creation
         SENSORCSVDIR = android.os.Environment.getExternalStorageDirectory() + "/DCIM/SensorCSV";
         File CSVdir = new File(SENSORCSVDIR);
